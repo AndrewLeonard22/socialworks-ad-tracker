@@ -122,11 +122,11 @@
 
 /* ---------- clients ---------- */
 .at-ctbl{min-width:0;table-layout:fixed}
-.at-ctbl th:nth-child(1){width:27%}
+.at-ctbl th:nth-child(1){width:26%}
 .at-ctbl th:nth-child(2){width:17%}
-.at-ctbl th:nth-child(3){width:21%}
-.at-ctbl th:nth-child(4){width:18.5%}
-.at-ctbl th:nth-child(5){width:11%}
+.at-ctbl th:nth-child(3){width:19%}
+.at-ctbl th:nth-child(4){width:19%}
+.at-ctbl th:nth-child(5){width:13.5%}
 .at-ctbl th:nth-child(6){width:5.5%}
 .at-ctbl td:last-child{text-align:right}
 /* removed clients: name, ad account, Add back */
@@ -137,8 +137,10 @@
 /* booking calendar and GHL account pickers: the status menu, grouped like the proto filter menu (.ld-fg h6) */
 .at-calm .menu{min-width:240px}
 .at-calm .menu h6{margin:0;padding:10px 12px 6px;font-size:13px;font-weight:400;color:var(--muted)}
-/* a long name ends in an ellipsis inside its pill (.ld-oc span) instead of running into the next column */
+/* a long name ends in an ellipsis inside its pill (.ld-oc span) instead of running into the next column;
+   the chevron keeps its size while the label gives way */
 .at-calm{max-width:100%}
+.at-calm .ld-oc svg{flex:none}
 /* every sub-account is listed, so the menu scrolls (thin bar, like .ap-grid) */
 .at-ghlm .menu{max-height:min(360px,46vh);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 /* a quiet line inside a picker (loading, nothing there, GHL's reason): the h6 tone, wrapping */
@@ -151,7 +153,7 @@
 .at-ctbl .ld-av{width:40px;height:40px;font-size:13px}
 /* rename in place: proto .st-in, left-aligned for a table */
 .at-cin{flex:0 1 auto;justify-content:flex-start;min-width:0}
-.at-cin input{text-align:left;font-weight:500;padding:6px 0}
+.at-cin input{text-align:left;font-weight:500;padding:6px 0;text-overflow:ellipsis}
 .at-cin input:hover{border-bottom-color:rgba(14,15,17,.18)}
 .at-cin input::placeholder{color:#9A9EA5;font-weight:400}
 .at-acct{display:inline-flex;align-items:center;gap:10px;max-width:100%;color:var(--ink-2)}

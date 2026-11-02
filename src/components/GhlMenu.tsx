@@ -5,6 +5,19 @@ import { suggestedFor } from "@/lib/ghl";
 import type { GhlAccount } from "@/lib/ghl";
 import { V2Icon } from "./v2/icons";
 
+/** open upward only when the menu (as tall as tracker.css lets it get) won't fit below
+    the picker inside the page's scroll area but has more room above */
+function opensUp(el: HTMLElement | null) {
+  if (!el) return false;
+  const r = el.getBoundingClientRect();
+  const box = el.closest(".dash")?.getBoundingClientRect();
+  const top = Math.max(box?.top ?? 0, 0);
+  const bottom = Math.min(box?.bottom ?? window.innerHeight, window.innerHeight);
+  const menu = Math.min(360, window.innerHeight * 0.46) + 16;
+  const below = bottom - r.bottom;
+  return below < menu && r.top - top > below;
+}
+
 /* GHL account picker for a client: the same table-cell picker and menu as the
    booking calendar, but a client links to one sub-account, so picking closes
    the menu (clicking the linked one again unlinks it). Sub-accounts named like
@@ -93,8 +106,7 @@ export function GhlMenu({
         data-tip={locked}
         onClick={() => {
           if (locked) return;
-          const r = ref.current?.getBoundingClientRect();
-          setUp(!!r && r.bottom + 380 > window.innerHeight);
+          setUp(opensUp(ref.current));
           setSeen(true);
           setOpen((o) => !o);
         }}

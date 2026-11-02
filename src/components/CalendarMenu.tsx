@@ -33,6 +33,13 @@ export function CalendarMenu({
   const [open, setOpen] = useState(false);
   const [up, setUp] = useState(false);
 
+  /* locked (say, its GHL account was unlinked) shuts it, so it never reopens by itself */
+  const [wasLocked, setWasLocked] = useState(!!locked);
+  if (wasLocked !== !!locked) {
+    setWasLocked(!!locked);
+    if (locked) setOpen(false);
+  }
+
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {

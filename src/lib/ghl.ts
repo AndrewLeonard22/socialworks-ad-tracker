@@ -55,7 +55,11 @@ const words = (s: string) =>
 function closeness(a: string, b: string) {
   const A = words(a);
   const B = words(b);
-  if (!A.length || !B.length) return 0;
+  /* a name made only of agency words ("SocialWorks") still matches itself */
+  if (!A.length || !B.length) {
+    const raw = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "");
+    return raw(a) && raw(a) === raw(b) ? 1 : 0;
+  }
   const ja = A.join("");
   const jb = B.join("");
   if (ja === jb) return 1;
