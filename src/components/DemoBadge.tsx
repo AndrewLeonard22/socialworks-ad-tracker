@@ -1,12 +1,34 @@
-/* Every number in the app is generated. This pill sits in each page header
-   until Meta and the CRM/calendar sources are connected. */
-export function DemoBadge() {
+"use client";
+
+import { useTracker } from "@/lib/store";
+
+/* Header pill. Without a Meta token every number is generated: orange "Dummy
+   data". With one, the dashboard and clients are live: green "Live from Meta".
+   The calendar's appointments stay sample data either way (`sample`). */
+export function DemoBadge({ sample = false }: { sample?: boolean }) {
+  const { source } = useTracker();
+  if (source === "dummy")
+    return (
+      <span
+        className="status at-demo"
+        data-tip="Sample numbers only. Meta, appointments, closed deals and revenue are not connected yet."
+      >
+        Dummy data
+      </span>
+    );
+  if (source !== "live") return null;
+  if (sample)
+    return (
+      <span className="status at-demo" data-tip="Sample appointments. The calendar is not connected yet.">
+        Dummy data
+      </span>
+    );
   return (
     <span
-      className="status at-demo"
-      data-tip="Sample numbers only. Meta, appointments, closed deals and revenue are not connected yet."
+      className="status ok at-demo"
+      data-tip="Spend, leads and cost per lead are live from Meta. Appointments, closed deals and revenue come later."
     >
-      Dummy data
+      Live from Meta
     </span>
   );
 }

@@ -1,0 +1,65 @@
+{
+ "me": {
+  "data": [
+   {
+    "id": "act_889944390092906",
+    "name": "Summerhouse x SocialWorks",
+    "account_status": 1,
+    "currency": "USD"
+   },
+   {
+    "id": "act_10170221",
+    "name": "Columbia Outdoor Restoration X SocialWorks",
+    "account_status": 1,
+    "currency": "USD"
+   },
+   {
+    "id": "act_322974296642516",
+    "name": "Washbroz X SocialWorks",
+    "account_status": 1,
+    "currency": "USD"
+   },
+   {
+    "id": "act_1463834608824526",
+    "name": "Archadeck X SocialWorks",
+    "account_status": 1,
+    "currency": "USD"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "MKS-oKOw9MpaV6LhuAej1xLB",
+    "after": "UENyBDLR_1kw9w51r5zkIplZ"
+   },
+   "next": "https://graph.facebook.com/v26.0/me/adaccounts?access_token=EAAG...&fields=id%2Cname%2Caccount_status%2Ccurrency&limit=4&after=UENyBDLR_1kw9w51r5zkIplZ"
+  }
+ },
+ "me|UENyBDLR_1kw9w51r5zkIplZ": {
+  "data": [
+   {
+    "id": "act_841724902001604",
+    "name": "Hawkeye X SocialWorks",
+    "account_status": 1,
+    "currency": "USD"
+   },
+   {
+    "id": "act_1228254518828538",
+    "name": "Clarity Concrete X SocialWorks",
+    "account_status": 1,
+    "currency": "USD"
+   },
+   {
+    "id": "act_602118833471205",
+    "name": "Trimlight Phoenix X SocialWorks",
+    "account_status": 2,
+    "currency": "USD"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "1Dtk-YNgk46N1nB6z_18kqV_",
+    "after": "Ox8n8N-D2p5pwXMi-AdHh4P3"
+   }
+  }
+ }
+}

@@ -1,6 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { presetRange } from "@/components/DatePop";
+import { isoDay, loadOverview } from "@/lib/live";
+import type { MetaAccount } from "@/lib/live";
 import { buildAccounts, todayNum } from "./data";
 import type { Account, ClientStatus } from "./data";
 
@@ -10,10 +13,16 @@ const KEY = "sw_adtracker_v1";
 
 type Override = { name?: string; status?: ClientStatus };
 
+/** where the numbers come from: "dummy" without a Meta token, "live" from Meta, "error" when Meta failed */
+export type Source = "loading" | "dummy" | "live" | "error";
+
 interface TrackerCtx {
-  /** false during SSR and the first client render (dates depend on the viewer's clock) */
+  /** false during SSR and the first client render (dates depend on the viewer's clock), and until the source is known */
   ready: boolean;
   today: number;
+  source: Source;
+  /** what went wrong, when source is "error" */
+  error: string;
   accounts: Account[];
   setName: (id: string, name: string) => void;
   setStatus: (id: string, status: ClientStatus) => void;
@@ -24,9 +33,28 @@ const Ctx = createContext<TrackerCtx | null>(null);
 /** business name, or the Meta ad account name when no business name is set */
 export const displayName = (a: Account) => a.businessName.trim() || a.adAccountName;
 
+/** a Meta ad account as a client: identity only (the dummy model fields stay empty) */
+export const accountFromMeta = (m: { id: string; name: string }): Account => ({
+  id: m.id,
+  adAccountName: m.name,
+  businessName: "",
+  status: "active",
+  tone: [...m.id].reduce((h, c) => h + c.charCodeAt(0), 0) % 7,
+  cpl: 0,
+  bookRate: 0,
+  closeRate: 0,
+  ticket: 0,
+  campaigns: [],
+});
+
 export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const [today, setToday] = useState<number | null>(null);
   const [over, setOver] = useState<Record<string, Override>>({});
+  const [meta, setMeta] = useState<{ source: Source; error: string; list: MetaAccount[] }>({
+    source: "loading",
+    error: "",
+    list: [],
+  });
 
   useEffect(() => {
     let saved: Record<string, Override> = {};
@@ -42,7 +70,29 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     return () => window.clearTimeout(id);
   }, []);
 
-  const base = useMemo(() => (today === null ? [] : buildAccounts(today)), [today]);
+  /* one request decides where the numbers come from: without a Meta token the
+     app keeps its dummy data, otherwise the clients are the token's ad accounts.
+     It asks for the dashboard's opening range, so the dashboard reuses it. */
+  useEffect(() => {
+    if (today === null) return;
+    let on = true;
+    const r = presetRange("30", today);
+    loadOverview(isoDay(r.from), isoDay(r.to)).then((o) => {
+      if (!on) return;
+      if (o.live) setMeta({ source: "live", error: "", list: o.accounts });
+      else if (o.reason === "no-token") setMeta({ source: "dummy", error: "", list: [] });
+      else setMeta({ source: "error", error: o.message, list: [] });
+    });
+    return () => {
+      on = false;
+    };
+  }, [today]);
+
+  const base = useMemo(() => {
+    if (today === null) return [];
+    if (meta.source === "dummy") return buildAccounts(today);
+    return meta.list.map(accountFromMeta);
+  }, [today, meta]);
 
   const accounts = useMemo(
     () =>
@@ -72,13 +122,15 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<TrackerCtx>(
     () => ({
-      ready: today !== null,
+      ready: today !== null && meta.source !== "loading",
       today: today ?? 0,
+      source: meta.source,
+      error: meta.error,
       accounts,
       setName: (id, name) => patch(id, { name }),
       setStatus: (id, status) => patch(id, { status }),
     }),
-    [today, accounts, patch]
+    [today, meta, accounts, patch]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

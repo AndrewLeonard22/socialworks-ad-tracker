@@ -80,8 +80,9 @@ function ClientRow({ a }: { a: Account }) {
 }
 
 export default function ClientsPage() {
-  const { ready, accounts } = useTracker();
+  const { ready, accounts, source, error } = useTracker();
   const by = (s: string) => accounts.filter((a) => a.status === s).length;
+  const counted = ready && source !== "error";
 
   return (
     <section className="dash ld at-page">
@@ -94,9 +95,9 @@ export default function ClientsPage() {
       </div>
 
       <div className="rp-sec">
-        <h3 className="ul-t">{ready ? `${accounts.length} clients` : "Clients"}</h3>
+        <h3 className="ul-t">{counted ? `${accounts.length} clients` : "Clients"}</h3>
         <span className="rp-k">
-          {ready ? `${by("active")} active · ${by("paused")} paused · ${by("churned")} churned` : ""}
+          {counted ? `${by("active")} active · ${by("paused")} paused · ${by("churned")} churned` : ""}
         </span>
       </div>
 
@@ -112,6 +113,11 @@ export default function ClientsPage() {
           {accounts.map((a) => (
             <ClientRow key={a.id} a={a} />
           ))}
+          {source === "error" && (
+            <tr className="at-none">
+              <td colSpan={3}>{error}</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </section>
