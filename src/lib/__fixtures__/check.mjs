@@ -245,6 +245,11 @@ assert.equal(calls[0].searchParams.get("access_token"), "TOKEN_Q");
 assert.match(pasted.message, /Meta says: "Invalid OAuth access token - Cannot parse access token \[token\]"/);
 assert.ok(!pasted.message.includes("EAABsbCS1iHgBAKZBxyz123456789"));
 ok("a pasted token loses its quotes and Bearer prefix; Meta's reason is shown with anything token-shaped masked");
+env({ META_ACCESS_TOKEN: "EAAtokenPART1\nPART2ZDZDEAAtokenPART1PART2ZDZD\n" });
+stub(() => reply(400, { error: { message: "Session has expired.", type: "OAuthException", code: 190 } }));
+await meta.getOverview("2026-10-01", "2026-10-31");
+assert.equal(calls[0].searchParams.get("access_token"), "EAAtokenPART1PART2ZDZD");
+ok("a token pasted twice in a row, or broken across lines, is sent once and whole");
 
 env({ META_ACCESS_TOKEN: "TOKEN_C" });
 stub((u) => {

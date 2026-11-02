@@ -31,14 +31,19 @@ const THUMB = 152;
 
 /* ---------- config ---------- */
 
-/* forgiving about how it was pasted: surrounding quotes or a "Bearer " prefix are dropped */
-const token = () =>
-  (process.env.META_ACCESS_TOKEN ?? "")
+/* Forgiving about how it was pasted: surrounding quotes, a "Bearer " prefix and any
+   spaces or line breaks are dropped (tokens never contain whitespace), and a token
+   pasted twice in a row is used once. */
+const token = () => {
+  const t = (process.env.META_ACCESS_TOKEN ?? "")
     .trim()
     .replace(/^["']+|["']+$/g, "")
     .trim()
     .replace(/^Bearer\s+/i, "")
-    .trim();
+    .replace(/\s+/g, "");
+  const half = t.length / 2;
+  return t.length % 2 === 0 && t.slice(0, half) === t.slice(half) ? t.slice(0, half) : t;
+};
 
 const version = () => {
   const v = process.env.META_API_VERSION?.trim();
