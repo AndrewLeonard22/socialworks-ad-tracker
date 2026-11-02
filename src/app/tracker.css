@@ -32,6 +32,8 @@
 .at-tbl th:first-child{width:24%}
 /* nine columns: the tighter CRM gutter (.rp-tbl.ld-tbl) so all fit on a laptop */
 .rp-tbl.at-tbl td+td,.rp-tbl.at-tbl th+th{padding-left:14px}
+/* breathing room so Revenue never sits on the row edge (open rows have a wash) */
+.rp-tbl.at-tbl td:last-child,.rp-tbl.at-tbl th:last-child{padding-right:20px}
 .at-tbl tbody tr{cursor:pointer}
 .at-tbl tbody tr.at-l2{cursor:default}
 .v2-root button.at-nm{letter-spacing:inherit}
