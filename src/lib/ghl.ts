@@ -69,6 +69,16 @@ function closeness(a: string, b: string) {
   return (0.8 * shared) / Math.min(new Set(A).size, sb.size);
 }
 
+/** the top suggestion, when one sub-account clearly matches (two equally good, say same-named sub-accounts, are left to pick by hand) */
+export function bestMatch(name: string, accounts: GhlAccount[]): GhlAccount | undefined {
+  const ranked = accounts
+    .map((g) => ({ g, s: closeness(name, g.name) }))
+    .filter((x) => x.s >= 0.6)
+    .sort((a, b) => b.s - a.s);
+  if (!ranked.length || (ranked.length > 1 && ranked[1].s === ranked[0].s)) return undefined;
+  return ranked[0].g;
+}
+
 /** sub-accounts whose name is close to the client's ad account name, best first */
 export function suggestedFor(name: string, accounts: GhlAccount[]): GhlAccount[] {
   return accounts

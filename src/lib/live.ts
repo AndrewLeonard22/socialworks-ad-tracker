@@ -148,6 +148,8 @@ export interface ClientSettings {
   ghl?: Named;
   /** booking calendars picked in that sub-account */
   calendars?: Named[];
+  /** someone unlinked the GHL account on purpose: the name match isn't filled in again */
+  unlinked?: boolean;
   removed?: boolean;
 }
 
@@ -166,9 +168,10 @@ async function send<T>(url: string, method: string, body: unknown): Promise<T> {
 
 /** everything the Clients tab saved, for every client */
 export const loadSettings = () => get<SettingsReply>("/api/clients");
-/** save one client's change; answers with that client's saved settings */
-export const saveSettings = (id: string, patch: SettingsPatch) =>
-  send<{ ok: true; settings: ClientSettings }>("/api/clients", "PATCH", { id, patch });
+/** save one client's change; answers with that client's saved settings. `auto`: a filled-in
+    name match, saved only while the client still has no GHL account */
+export const saveSettings = (id: string, patch: SettingsPatch, auto = false) =>
+  send<{ ok: true; settings: ClientSettings }>("/api/clients", "PATCH", { id, patch, ...(auto ? { auto } : {}) });
 /** first visit after the move to the database: copy this browser's edits up (fills only clients with nothing saved) */
 export const importSettings = (settings: SettingsMap) => send<SettingsReply>("/api/clients", "POST", { import: settings });
 

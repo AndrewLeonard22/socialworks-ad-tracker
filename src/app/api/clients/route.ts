@@ -3,7 +3,8 @@ import { allSettings, cleanPatch, importSettings, patchSettings, validId } from 
 
 /* /api/clients: what the Clients tab saves, shared by everyone who opens the tracker.
    GET                                  { ok: true, settings: { [adAccountId]: settings } }
-   PATCH { id, patch }                  { ok: true, settings }   one client's change (null clears a field)
+   PATCH { id, patch, auto? }           { ok: true, settings }   one client's change (null clears a field);
+                                                                 auto: only while the client has no GHL account
    POST  { import: { [id]: settings } } { ok: true, settings }   one-time copy of a browser's old edits
    Failures answer { ok: false, message } with a 4xx/5xx status. */
 
@@ -35,7 +36,7 @@ export async function PATCH(req: Request) {
   const patch = cleanPatch(b.patch);
   if (!Object.keys(patch).length) return fail("Nothing to save", 400);
   try {
-    return Response.json({ ok: true, settings: await patchSettings(b.id, patch) });
+    return Response.json({ ok: true, settings: await patchSettings(b.id, patch, b.auto === true) });
   } catch (e) {
     console.error("[clients] save:", e);
     return fail(explainDb(e), 503);

@@ -41,6 +41,8 @@ export function cleanPatch(p: unknown): SettingsPatch {
       .filter((c): c is Named => !!c && !seen.has(c.id) && !!seen.add(c.id))
       .slice(0, 30);
   }
+  if (o.unlinked === null) out.unlinked = null;
+  else if (typeof o.unlinked === "boolean") out.unlinked = o.unlinked;
   if (o.removed === null) out.removed = null;
   else if (typeof o.removed === "boolean") out.removed = o.removed;
   return out;
@@ -61,10 +63,14 @@ export async function allSettings(): Promise<SettingsMap> {
   return out;
 }
 
-/** apply one change; a write that loses a race reads again and re-applies */
-export async function patchSettings(id: string, patch: SettingsPatch): Promise<ClientSettings> {
+/** apply one change; a write that loses a race reads again and re-applies. With `auto`
+    (a name match filled in by a browser) it applies only while the client still has no
+    GHL account, wasn't unlinked on purpose and wasn't removed, so a browser holding an
+    old copy can't overwrite someone's pick. Answers with the client's saved settings. */
+export async function patchSettings(id: string, patch: SettingsPatch, auto = false): Promise<ClientSettings> {
   for (let attempt = 0; ; attempt++) {
     const cur = await getItem<ClientSettings>(PK, id);
+    if (auto && (cur?.data.ghl || cur?.data.unlinked || cur?.data.removed)) return cur.data;
     const next = apply(cur?.data ?? {}, patch);
     try {
       await putItem(PK, id, next, cur?.v ?? 0);

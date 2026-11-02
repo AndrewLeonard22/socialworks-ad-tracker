@@ -14,7 +14,7 @@ import {
 import type { AccountInfo, ClientSettings, Named, SettingsMap, SettingsPatch } from "@/lib/live";
 import { buildAccounts, todayNum } from "./data";
 import type { Account, ClientStatus } from "./data";
-import { ghlAccountsFrom } from "./ghl";
+import { bestMatch, ghlAccountsFrom } from "./ghl";
 
 /* What the Clients tab edits (business name, GHL account, booking calendars, status,
    removed) is saved in the tracker's database through /api/clients, so everyone sees
@@ -94,6 +94,7 @@ function tidy(raw: unknown): ClientSettings {
   if (o.status === "active" || o.status === "paused" || o.status === "churned") s.status = o.status;
   if (isNamed(o.ghl)) s.ghl = { id: o.ghl.id, name: o.ghl.name };
   if (Array.isArray(o.calendars)) s.calendars = o.calendars.filter(isNamed).map((c) => ({ id: c.id, name: c.name }));
+  if (typeof o.unlinked === "boolean") s.unlinked = o.unlinked;
   if (typeof o.removed === "boolean") s.removed = o.removed;
   return s;
 }
@@ -151,6 +152,8 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     list: [],
   });
   const [crmTick, setCrmTick] = useState(0);
+  /** the database's settings are in (only then may links be filled in automatically) */
+  const [synced, setSynced] = useState(false);
 
   /* this browser's copy first (instant), then the database's, which wins. The first
      visit after the move copies this browser's old edits up (names, statuses, removed). */
@@ -166,6 +169,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       const t = tidyAll(s);
       setOver(t);
       writeLocal(t);
+      setSynced(true);
     };
     loadSettings()
       .then((r) => {
@@ -298,6 +302,33 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  /* a client with no GHL account gets its suggested one filled in (new clients too).
+     Only once the database's settings are in, so a saved link is never overwritten;
+     a client someone unlinked on purpose, or took off the tracker, is left alone. */
+  useEffect(() => {
+    if (!synced || crmList.state !== "on" || !crmList.list.length) return;
+    for (const a of base) {
+      const o = over[a.id];
+      if (o?.ghl || o?.unlinked || o?.removed) continue;
+      const g = bestMatch(a.adAccountName, crmList.list);
+      if (!g) continue;
+      const ghl = { id: g.id, name: g.name };
+      setOver((prev) => (prev[a.id]?.ghl ? prev : { ...prev, [a.id]: { ...prev[a.id], ghl } }));
+      /* the database has the last word: if someone linked or unlinked it meanwhile, take theirs */
+      saveSettings(a.id, { ghl }, true).then(
+        (r) =>
+          setOver((prev) => {
+            const next = { ...prev, [a.id]: tidy(r.settings) };
+            writeLocal(next);
+            return next;
+          }),
+        () => {
+          /* not saved: it fills in again on the next visit */
+        }
+      );
+    }
+  }, [synced, crmList, base, over]);
+
   const value = useMemo<TrackerCtx>(
     () => ({
       ready: today !== null && meta.source !== "loading",
@@ -313,7 +344,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       calendarsOf: (id) => over[id]?.calendars ?? [],
       setName: (id, name) => patch(id, { name }),
       setStatus: (id, status) => patch(id, { status }),
-      setGhl: (id, ghl) => patch(id, { ghl, calendars: null }),
+      setGhl: (id, ghl) => patch(id, { ghl, calendars: null, unlinked: ghl ? null : true }),
       setCalendars: (id, calendars) => patch(id, { calendars }),
       setRemoved: (id, r) => patch(id, { removed: r }),
       refreshCrm: () => setCrmTick((t) => t + 1),
