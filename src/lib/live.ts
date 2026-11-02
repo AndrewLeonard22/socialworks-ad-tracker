@@ -231,4 +231,33 @@ export function loadAppointments(from: string, to: string): Promise<CrmAppointme
 }
 
 /** forget fetched appointments (a client's links or calendars changed) */
-export const clearAppointments = () => bookings.clear();
+export const clearAppointments = () => {
+  bookings.clear();
+  calendarDays.clear();
+};
+
+/** one appointment on the Calendar tab, at its local day (YYYY-MM-DD) and minute where the client is */
+export interface CalAppt {
+  id: string;
+  acct: string;
+  date: string;
+  min: number;
+  lead: string;
+  type: string;
+}
+
+export type CrmCalendarDays = { ok: true; appointments: CalAppt[]; errors?: { id: string; message: string }[] } | CrmFail;
+
+const calendarDays = new Map<string, { at: number; p: Promise<CrmCalendarDays> }>();
+/** every appointment on the picked calendars from day `from` through `to` (kept for a minute) */
+export function loadCalendarDays(from: string, to: string): Promise<CrmCalendarDays> {
+  const key = `${from}|${to}`;
+  const hit = calendarDays.get(key);
+  if (hit && Date.now() - hit.at < 60000) return hit.p;
+  const p = get<CrmCalendarDays>(`/api/crm/calendar?from=${from}&to=${to}`).catch(crmFail);
+  calendarDays.set(key, { at: Date.now(), p });
+  p.then((a) => {
+    if ((!a.ok || a.errors?.length) && calendarDays.get(key)?.p === p) calendarDays.delete(key);
+  });
+  return p;
+}

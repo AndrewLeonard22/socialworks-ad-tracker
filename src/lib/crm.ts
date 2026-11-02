@@ -478,6 +478,27 @@ const time = (v: unknown) => {
 const DROP = new Set(["cancelled", "canceled", "invalid"]);
 
 /** the people booked on one client's picked calendars, by the day they booked, within [from, to] */
+/** the real appointments on one picked calendar whose start falls in [lo, hi] (ms):
+    deleted, cancelled and invalid ones left out */
+async function liveEvents(link: Link, calendarId: string, lo: number, hi: number): Promise<Json[]> {
+  const r = await withLocation(link.location, (token) =>
+    call("/calendars/events", {
+      token,
+      version: V_CAL,
+      query: { locationId: link.location, calendarId, startTime: String(lo), endTime: String(hi) },
+    })
+  );
+  const events: Json[] = Array.isArray(r?.events) ? r.events : [];
+  return events.filter(
+    (e) =>
+      e?.id &&
+      e.deleted !== true &&
+      (!e.calendarId || String(e.calendarId) === calendarId) &&
+      !DROP.has(String(e.appointmentStatus ?? e.status ?? "").toLowerCase())
+  );
+}
+
+/** the people booked on one client's picked calendars, by the day they booked, within [from, to] */
 async function bookedFor(link: Link, from: string, to: string): Promise<string[]> {
   const { timezone } = await location(link.location);
   const start = dayStart(from, timezone);
@@ -486,27 +507,11 @@ async function bookedFor(link: Link, from: string, to: string): Promise<string[]
   const seen = new Set<string>();
   await Promise.all(
     link.calendars.map(async (calendarId) => {
-      const r = await withLocation(link.location, (token) =>
-        call("/calendars/events", {
-          token,
-          version: V_CAL,
-          query: {
-            locationId: link.location,
-            calendarId,
-            /* booked in the range, held up to six months out (or entered up to two weeks late) */
-            startTime: String(start - 14 * DAY),
-            endTime: String(end + 183 * DAY),
-          },
-        })
-      );
-      const events: Json[] = Array.isArray(r?.events) ? r.events : [];
-      for (const e of events) {
-        const id = String(e?.id ?? "");
-        if (!id || seen.has(id)) continue;
+      /* booked in the range, held up to six months out (or entered up to two weeks late) */
+      for (const e of await liveEvents(link, calendarId, start - 14 * DAY, end + 183 * DAY)) {
+        const id = String(e.id);
+        if (seen.has(id)) continue;
         seen.add(id);
-        if (e.deleted === true) continue;
-        if (e.calendarId && String(e.calendarId) !== calendarId) continue;
-        if (DROP.has(String(e.appointmentStatus ?? e.status ?? "").toLowerCase())) continue;
         const added = time(e.dateAdded ?? e.createdAt);
         if (!(added >= start && added < end)) continue;
         people.add(key(`${link.location}:${e.contactId || id}`));
@@ -562,6 +567,108 @@ export function appointments(links: Link[], from: string, to: string) {
   });
 }
 
+/* ---------- the calendar view ---------- */
+
+/** one appointment on the calendar view, at its local day and time where the client is */
+export interface CalAppt {
+  id: string;
+  /** the client's Meta ad account id */
+  acct: string;
+  /** YYYY-MM-DD, local to the sub-account */
+  date: string;
+  /** minutes from local midnight */
+  min: number;
+  /** who: first name and last initial when the title is a name */
+  lead: string;
+  /** the calendar it's on */
+  type: string;
+}
+
+/** a calendar link plus the picked calendars' names */
+export interface CalLink extends Link {
+  names: Record<string, string>;
+}
+
+/** an appointment's local day and minute: GHL's own wall clock when the time carries
+    its offset (2026-11-02T10:15:00-06:00), otherwise converted to the sub-account's zone */
+function wallClock(start: unknown, zone: string): { date: string; min: number } | null {
+  const s = String(start ?? "");
+  const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/.exec(s);
+  if (m && /[+-]\d{2}:?\d{2}$/.test(s)) return { date: m[1], min: +m[2] * 60 + +m[3] };
+  const t = time(start);
+  if (!Number.isFinite(t)) return null;
+  const local = new Date(t + zoneOffset(zone, t));
+  return { date: local.toISOString().slice(0, 10), min: local.getUTCHours() * 60 + local.getUTCMinutes() };
+}
+
+/** "Viridiana Guzman Feldman" -> "Viridiana F." (the calendar never shows a full name);
+    a title that isn't a plain name is shown as GHL has it, shortened */
+function leadName(title: unknown) {
+  const t = String(title ?? "").replace(/\s+/g, " ").trim();
+  if (!t) return "Appointment";
+  if (/^\p{L}[\p{L}'\u2019.-]*(?: \p{L}[\p{L}'\u2019.-]*){0,3}$/u.test(t)) {
+    const w = t.split(" ");
+    return w.length > 1 ? `${w[0]} ${w[w.length - 1][0].toUpperCase()}.` : w[0];
+  }
+  return t.length > 32 ? `${t.slice(0, 31)}\u2026` : t;
+}
+
+/** every appointment on the clients' picked calendars from day `from` through `to` (YYYY-MM-DD, local) */
+export function calendarAppointments(links: CalLink[], from: string, to: string) {
+  const sig = links
+    .map((l) => `${l.acct}>${l.location}:${[...l.calendars].sort().join(",")}`)
+    .sort()
+    .join(";");
+  return cached(`cal:${from}|${to}|${key(sig)}:${sig.length}`, 2 * MIN, async () => {
+    await agency();
+    const out: CalAppt[] = [];
+    const errors: { id: string; message: string }[] = [];
+    const queue = [...links];
+    let done = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const deadline = new Promise<void>((resolve) => (timer = setTimeout(resolve, DEADLINE)));
+    const worker = async () => {
+      for (let l = queue.shift(); l && !done; l = queue.shift()) {
+        const link = l;
+        try {
+          const { timezone } = await location(link.location);
+          /* a day of slack each side for time zones; the local day decides */
+          const lo = dayStart(from, timezone) - DAY;
+          const hi = dayStart(nextDay(to), timezone) + DAY;
+          const seen = new Set<string>();
+          const mine: CalAppt[] = [];
+          await Promise.all(
+            link.calendars.map(async (calendarId) => {
+              for (const e of await liveEvents(link, calendarId, lo, hi)) {
+                const id = String(e.id);
+                if (seen.has(id)) continue;
+                seen.add(id);
+                const at = wallClock(e.startTime, timezone);
+                if (!at || at.date < from || at.date > to) continue;
+                mine.push({ id, acct: link.acct, date: at.date, min: at.min, lead: leadName(e.title), type: link.names[calendarId] ?? "Appointment" });
+              }
+            })
+          );
+          if (!done) out.push(...mine);
+        } catch (e) {
+          if (e instanceof CrmError && (e.code === "reinstall" || e.code === "not-connected" || e.code === "config")) throw e;
+          if (!done) errors.push({ id: link.acct, message: explain(e) });
+        }
+      }
+    };
+    try {
+      await Promise.race([Promise.all(Array.from({ length: CONCURRENCY }, worker)), deadline]);
+    } finally {
+      done = true;
+      clearTimeout(timer);
+    }
+    return {
+      appointments: [...out].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.min - b.min)),
+      errors: [...errors],
+    };
+  });
+}
+
 /* ---------- fixtures (local testing only) ---------- */
 
 /* GHL's side of the fixture is one process-wide state (each route has its own copy of
@@ -607,20 +714,29 @@ async function fromFixture(path: string, c: Call): Promise<Json> {
     const now = Date.now();
     const lo = Number(q.startTime);
     const hi = Number(q.endTime);
+    const zone = fx.locations.find((l: Json) => l._id === q.locationId)?.timezone ?? "America/New_York";
+    const NAMES = ["Pat Rivera", "Sam Ortiz", "Jordan Lee", "Casey Morgan", "Alex Kim", "Riley Chen", "Taylor Brooks", "Morgan Diaz", "Jamie Fox"];
     const events = (fx.events[q.calendarId] ?? []).map((e: Json, i: number) => {
       const added = now + e.days * DAY;
+      /* like GHL: the start in the sub-account's wall clock with its offset, on the hour */
+      const day = new Date(added + (e.ahead ?? 2) * DAY + zoneOffset(zone, added)).toISOString().slice(0, 10);
+      const at = dayStart(day, zone) + (9 + (i % 8)) * 3600000;
+      const off = zoneOffset(zone, at) / 60000;
+      const hhmm = (n: number) => `${String(Math.floor(Math.abs(n) / 60)).padStart(2, "0")}:${String(Math.abs(n) % 60).padStart(2, "0")}`;
       return {
         id: `${q.calendarId}-ev${i}`,
         calendarId: q.calendarId,
         locationId: q.locationId,
         contactId: e.contact,
+        title: NAMES[Number(String(e.contact).replace(/\D/g, "")) % NAMES.length],
         appointmentStatus: e.status,
         deleted: !!e.deleted,
         dateAdded: new Date(added).toISOString(),
-        startTime: new Date(added + (e.ahead ?? 2) * DAY).toISOString(),
+        startTime: `${day}T${hhmm(9 * 60 + (i % 8) * 60)}:00${off < 0 ? "-" : "+"}${hhmm(off)}`,
+        _at: at,
       };
     });
-    return { events: events.filter((e: Json) => Date.parse(e.startTime) >= lo && Date.parse(e.startTime) <= hi) };
+    return { events: events.filter((e: Json) => e._at >= lo && e._at <= hi) };
   }
   throw toError(404, { message: `No fixture for ${path}` });
 }

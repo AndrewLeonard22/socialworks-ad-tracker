@@ -4,9 +4,15 @@ import { useTracker } from "@/lib/store";
 
 /* Header pill. Without a Meta token every number is generated: orange "Dummy
    data". With one, the dashboard and clients are live: green "Live from Meta".
-   The calendar's appointments stay sample data either way (`sample`). */
-export function DemoBadge({ sample = false }: { sample?: boolean }) {
+   The calendar (`sample`) is live from GHL once GHL is connected (`ghl`). */
+export function DemoBadge({ sample = false, ghl = false }: { sample?: boolean; ghl?: boolean }) {
   const { source } = useTracker();
+  if (source === "live" && sample && ghl)
+    return (
+      <span className="status ok at-demo" data-tip="Appointments on each client's picked GHL calendars.">
+        Live from GHL
+      </span>
+    );
   if (source === "dummy")
     return (
       <span

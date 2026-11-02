@@ -1,13 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { DemoBadge } from "@/components/DemoBadge";
 import { V2Icon } from "@/components/v2/icons";
 import { appointmentsBetween, dateOf, dayNumOf } from "@/lib/data";
 import type { Appointment } from "@/lib/data";
 import { fmtTime } from "@/lib/format";
+import { isoDay, loadCalendarDays } from "@/lib/live";
+import type { CalAppt } from "@/lib/live";
 import { displayName, useTracker } from "@/lib/store";
+
+/** a GHL appointment in the calendar's shape (its local YYYY-MM-DD as a day number) */
+const fromGhl = (a: CalAppt): Appointment => ({
+  id: a.id,
+  accountId: a.acct,
+  day: Math.floor(Date.parse(`${a.date}T00:00:00Z`) / 86400000),
+  min: a.min,
+  lead: a.lead,
+  type: a.type,
+});
 
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MAX = 3;
@@ -21,7 +33,7 @@ const shortTime = (min: number) => {
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
 
 export default function CalendarPage() {
-  const { ready, today, accounts } = useTracker();
+  const { ready, today, accounts, source, crm } = useTracker();
   const [offset, setOffset] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
 
@@ -30,23 +42,69 @@ export default function CalendarPage() {
   const gridStart = dayNumOf(first) - first.getDay();
   const sel = picked ?? today;
 
+  /* live: the real appointments on each client's picked GHL calendars, for the six
+     weeks on screen (and the picked day when paging leaves it off the grid). What's
+     already loaded stays put while another month loads; dummy mode keeps its samples. */
+  const live = ready && source === "live";
+  const [real, setReal] = useState<Map<string, Appointment>>(() => new Map());
+  const keep = (list: CalAppt[]) =>
+    setReal((m) => {
+      const next = new Map(m);
+      for (const a of list) next.set(a.id, fromGhl(a));
+      return next;
+    });
+  const gridFrom = isoDay(gridStart);
+  const gridTo = isoDay(gridStart + 41);
+  useEffect(() => {
+    if (!live) return;
+    let on = true;
+    loadCalendarDays(gridFrom, gridTo).then((r) => {
+      if (!on || !r.ok) return;
+      /* this range's answer replaces whatever was kept for these days */
+      setReal((m) => {
+        const next = new Map([...m].filter(([, ev]) => ev.day < gridStart || ev.day > gridStart + 41));
+        for (const a of r.appointments) next.set(a.id, fromGhl(a));
+        return next;
+      });
+    });
+    return () => {
+      on = false;
+    };
+  }, [live, gridFrom, gridTo, gridStart]);
+  const selOff = sel < gridStart || sel > gridStart + 41;
+  useEffect(() => {
+    if (!live || !selOff) return;
+    let on = true;
+    loadCalendarDays(isoDay(sel), isoDay(sel)).then((r) => on && r.ok && keep(r.appointments));
+    return () => {
+      on = false;
+    };
+  }, [live, selOff, sel]);
+
   const byId = useMemo(() => new Map(accounts.map((a) => [a.id, a])), [accounts]);
   const byDay = useMemo(() => {
     const m = new Map<number, Appointment[]>();
     if (!ready) return m;
-    for (const ev of appointmentsBetween(accounts, gridStart, gridStart + 41, today)) {
-      const list = m.get(ev.day);
-      if (list) list.push(ev);
+    const list = live
+      ? [...real.values()]
+          .filter((ev) => byId.has(ev.accountId) && ev.day >= gridStart && ev.day <= gridStart + 41)
+          .sort((a, b) => a.day - b.day || a.min - b.min)
+      : appointmentsBetween(accounts, gridStart, gridStart + 41, today);
+    for (const ev of list) {
+      const day = m.get(ev.day);
+      if (day) day.push(ev);
       else m.set(ev.day, [ev]);
     }
     return m;
-  }, [ready, accounts, gridStart, today]);
+  }, [ready, live, real, byId, accounts, gridStart, today]);
 
   /* the selected day can sit outside the visible grid (e.g. after paging months) */
   const selEvents = useMemo(() => {
     if (!ready) return [];
-    return byDay.get(sel) ?? appointmentsBetween(accounts, sel, sel, today);
-  }, [ready, byDay, sel, accounts, today]);
+    if (byDay.has(sel)) return byDay.get(sel)!;
+    if (!live) return appointmentsBetween(accounts, sel, sel, today);
+    return [...real.values()].filter((ev) => ev.day === sel && byId.has(ev.accountId)).sort((a, b) => a.min - b.min);
+  }, [ready, live, real, byId, byDay, sel, accounts, today]);
 
   const monthFrom = dayNumOf(first);
   const monthTo = dayNumOf(new Date(first.getFullYear(), first.getMonth() + 1, 0));
@@ -72,7 +130,7 @@ export default function CalendarPage() {
           Calendar
           <span>Upcoming client appointments</span>
         </h1>
-        <DemoBadge sample />
+        <DemoBadge sample ghl={crm.state === "on"} />
       </div>
 
       <div className="ld-bar at-calbar">
