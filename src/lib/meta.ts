@@ -89,7 +89,14 @@ type Json = any;
 type Reply = { status: number; body: Json };
 
 async function send(url: URL, form?: URLSearchParams): Promise<Reply> {
-  if (fixture()) return fromFixture(url, form);
+  /* NODE_ENV is fixed at build time: production builds drop this branch, so
+     the fixture files are never read or shipped there */
+  if (process.env.NODE_ENV !== "production") {
+    if (fixture()) {
+      const dir = join(process.cwd(), "src/lib/__fixtures__");
+      return fromFixture(url, form, async (file) => JSON.parse(await readFile(join(dir, file), "utf8")));
+    }
+  }
   const res = await fetch(url, {
     method: form ? "POST" : "GET",
     body: form,
@@ -104,7 +111,7 @@ async function graph(path: string, params: Record<string, string> = {}, post?: R
   const auth: Record<string, string> = { access_token: token() || "fixture" };
   const secret = process.env.META_APP_SECRET?.trim();
   if (secret) auth.appsecret_proof = appsecretProof(auth.access_token, secret);
-  const url = new URL(`https://graph.facebook.com/${version()}/${path}`);
+  const url = new URL(`https://graph.facebook.com/${version()}${path ? `/${path}` : ""}`);
   const form = post ? new URLSearchParams({ ...post, ...auth }) : undefined;
   if (!post) url.search = new URLSearchParams({ ...params, ...auth }).toString();
 
@@ -400,9 +407,7 @@ export function getPreview(adId: string): Promise<AdPreview> {
 
 /* ---------- fixtures (local testing only, see fixture() above) ---------- */
 
-async function fromFixture(url: URL, form?: URLSearchParams): Promise<Reply> {
-  const read = async (file: string): Promise<Json> =>
-    JSON.parse(await readFile(join(process.cwd(), "src/lib/__fixtures__", file), "utf8"));
+async function fromFixture(url: URL, form: URLSearchParams | undefined, read: (file: string) => Promise<Json>): Promise<Reply> {
   if (fixture() === "error") return { status: 400, body: await read("error.json") };
 
   /* batch call: each relative_url is a creative read, answered from creatives.json */

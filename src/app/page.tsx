@@ -195,7 +195,7 @@ export default function DashboardPage() {
   const toggleAccount = (r: Row) => {
     const id = r.account.id;
     toggle(id);
-    if (!live || r.error || !r.campaigns.length || details[id]) return;
+    if (!live || r.error || details[id]) return;
     loadDetails(id).then(
       (d) => setDetails((m) => ({ ...m, [id]: d })),
       () => {}

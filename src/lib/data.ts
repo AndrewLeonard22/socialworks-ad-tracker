@@ -1,9 +1,10 @@
 /* DUMMY DATA. Nothing here is live.
    Every account, campaign, ad set, metric and appointment below is generated
-   from a fixed seed so the numbers stay stable between reloads. When the Meta
-   API (spend, leads) and the CRM/calendar sources (appointments, closed deals,
-   revenue) are connected, replace `dailyMetrics` and `appointmentsBetween`
-   with real fetches and keep the same shapes. */
+   from a fixed seed so the numbers stay stable between reloads. The app runs
+   on it when no Meta token is set; with one, spend and leads come from Meta
+   (src/lib/meta.ts) and only the calendar's appointments stay dummy. When the
+   CRM/calendar source (appointments, closed deals, revenue) is connected,
+   replace `dailyMetrics` and `appointmentsBetween` with real fetches. */
 
 export type ClientStatus = "active" | "paused" | "churned";
 
