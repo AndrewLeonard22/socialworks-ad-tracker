@@ -14,8 +14,8 @@ import { emptyTotals, isRunning, rollup } from "@/lib/data";
 import type { Account } from "@/lib/data";
 import { derived, initials } from "@/lib/format";
 import type { Metrics } from "@/lib/format";
-import { isoDay, loadDetails, loadOverview, loadPreview } from "@/lib/live";
-import type { AccountDetails, MetaAccount, Overview } from "@/lib/live";
+import { isoDay, loadAppointments, loadDetails, loadOverview, loadPreview } from "@/lib/live";
+import type { AccountDetails, CrmAppointments, MetaAccount, Overview } from "@/lib/live";
 import { accountFromMeta, displayName, useTracker } from "@/lib/store";
 
 const KPIS = [
@@ -103,10 +103,11 @@ function dummyRows(accounts: Account[], from: number, to: number, today: number)
 
 const sl = (n: { spend: number; leads: number }): Metrics => ({ spend: n.spend, leads: n.leads });
 
-function liveRows(list: MetaAccount[], byId: Map<string, Account>): Row[] {
+/** live rows; a client linked to GHL calendars also gets its appointments (account level only) */
+function liveRows(list: MetaAccount[], byId: Map<string, Account>, booked: Record<string, string[]> | null): Row[] {
   return list.map((m) => ({
     account: byId.get(m.id) ?? accountFromMeta(m),
-    t: m.error ? {} : sl(m),
+    t: m.error ? {} : booked?.[m.id] ? { ...sl(m), appts: booked[m.id].length } : sl(m),
     error: m.error,
     campaigns: m.campaigns.map((c) => ({
       id: c.id,
@@ -166,6 +167,18 @@ export default function DashboardPage() {
       on = false;
     };
   }, [live, from, to]);
+  /* appointments on each linked client's GHL calendars for the same range; the
+     last answer stays until the new one lands, like the Meta numbers */
+  const [appts, setAppts] = useState<CrmAppointments | null>(null);
+  useEffect(() => {
+    if (!live) return;
+    let on = true;
+    loadAppointments(from, to).then((a) => on && setAppts(a));
+    return () => {
+      on = false;
+    };
+  }, [live, from, to]);
+  const booked = appts?.ok ? appts.booked : null;
   const loading = live && !!res && (res.from !== from || res.to !== to);
   /* nothing to show yet: the first answer (the row fades in late, so a quick answer never flashes it) */
   const waiting = source === "loading" ? today > 0 : live && !res;
@@ -181,10 +194,10 @@ export default function DashboardPage() {
       source === "dummy"
         ? dummyRows(accounts, range.from, range.to, today)
         : res?.o.live
-          ? liveRows(res.o.accounts.filter((m) => !removedIds.has(m.id)), byId)
+          ? liveRows(res.o.accounts.filter((m) => !removedIds.has(m.id)), byId, booked)
           : [];
     return list.sort((a, b) => (b.t.spend ?? -1) - (a.t.spend ?? -1));
-  }, [ready, source, accounts, range.from, range.to, today, res, byId, removedIds]);
+  }, [ready, source, accounts, range.from, range.to, today, res, byId, removedIds, booked]);
   const query = q.trim().toLowerCase();
   const shown = rows.filter(
     (r) =>
@@ -192,7 +205,15 @@ export default function DashboardPage() {
       displayName(r.account).toLowerCase().includes(query) ||
       r.account.adAccountName.toLowerCase().includes(query)
   );
-  const k = derived(addUp(source === "dummy" ? emptyTotals() : { spend: 0, leads: 0 }, shown));
+  let k = derived(addUp(source === "dummy" ? emptyTotals() : { spend: 0, leads: 0 }, shown));
+  /* live: appointment tiles cover only clients linked to GHL calendars (their spend and
+     leads against their bookings), and a person booked on a shared calendar counts once */
+  const linked = live && booked ? shown.filter((r) => booked[r.account.id]) : [];
+  if (linked.length) {
+    const people = new Set(linked.flatMap((r) => booked![r.account.id]));
+    const d = derived({ ...addUp({ spend: 0, leads: 0 }, linked), appts: people.size });
+    k = { ...k, appts: d.appts, l2a: d.l2a, cpa: d.cpa };
+  }
   const toggle = (id: string) => setOpen((o) => ({ ...o, [id]: !o[id] }));
   /* a live account's statuses and thumbnails load when it is hovered or first opened;
      if Meta can't send them, the rows just go without (no endless placeholder) */

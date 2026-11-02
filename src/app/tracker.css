@@ -141,6 +141,8 @@
 .at-calm{max-width:100%}
 /* every sub-account is listed, so the menu scrolls (thin bar, like .ap-grid) */
 .at-ghlm .menu{max-height:min(360px,46vh);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+/* a quiet line inside a picker (loading, nothing there, GHL's reason): the h6 tone, wrapping */
+.at-calm .menu .at-note{margin:0;padding:10px 12px;max-width:280px;font-size:13px;line-height:1.4;color:var(--muted);white-space:normal}
 /* calendars wait for a GHL account: the proto disabled button (.ld-ff button:disabled), tooltip says why */
 .at-calm .ld-oc[aria-disabled="true"]{opacity:.55;cursor:default;filter:none}
 .at-calm .ld-oc[aria-disabled="true"]:hover{background:rgba(255,255,255,.42)}

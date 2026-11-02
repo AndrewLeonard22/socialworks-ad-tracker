@@ -10,11 +10,34 @@ import { v2toast } from "@/components/v2/Toast";
 import type { Account } from "@/lib/data";
 import { initials } from "@/lib/format";
 import { calendarsFor } from "@/lib/ghl";
+import type { BookingCalendar } from "@/lib/ghl";
+import { loadCalendars } from "@/lib/live";
 import { displayName, useTracker } from "@/lib/store";
 
 function ClientRow({ a }: { a: Account }) {
-  const { setName, setStatus, ghlAccounts, ghlOf, setGhl, calendarsOf, setCalendars, setRemoved } = useTracker();
+  const { crm, setName, setStatus, ghlAccounts, ghlOf, setGhl, calendarsOf, setCalendars, setRemoved } = useTracker();
   const ghl = ghlOf(a.id);
+  const picked = calendarsOf(a.id);
+  /* live: a sub-account's calendars load the first time its picker opens */
+  const [cals, setCals] = useState<{ of: string; list: BookingCalendar[] | null; why: string } | null>(null);
+  const dummy = crm.state === "dummy";
+  const mine = ghl && cals?.of === ghl.id ? cals : null;
+  const listed: BookingCalendar[] = !ghl ? [] : dummy ? calendarsFor(ghl.id) : (mine?.list ?? []);
+  /* a pick that's gone from GHL (renamed away or turned off) still shows, so it can be unticked */
+  const calendars = [...listed, ...picked.filter((p) => !listed.some((c) => c.id === p.id))];
+  const openCalendars = () => {
+    if (!ghl || dummy || mine?.list) return;
+    const of = ghl.id;
+    setCals({ of, list: null, why: "" });
+    loadCalendars(of).then((r) =>
+      setCals((c) => (c && c.of !== of ? c : { of, list: r.ok ? r.calendars : null, why: r.ok ? "" : r.message }))
+    );
+  };
+  const calNote =
+    !ghl || dummy
+      ? undefined
+      : mine?.why ||
+        (!mine?.list ? "Loading calendars…" : !mine.list.length ? "No active calendars in this GHL account" : undefined);
   const [val, setVal] = useState(a.businessName);
   const input = useRef<HTMLInputElement>(null);
   const cancel = useRef(false);
@@ -69,7 +92,20 @@ function ClientRow({ a }: { a: Account }) {
         </div>
       </td>
       <td>
-        <GhlMenu accounts={ghlAccounts} match={a.adAccountName} value={ghl?.id} onChange={(g) => setGhl(a.id, g)} />
+        <GhlMenu
+          accounts={ghlAccounts}
+          match={a.adAccountName}
+          value={ghl}
+          onChange={(g) => setGhl(a.id, g ? { id: g.id, name: g.name } : null)}
+          locked={crm.state === "off" ? crm.why : undefined}
+          note={
+            crm.state === "loading"
+              ? "Loading GHL accounts…"
+              : crm.state === "on" && !ghlAccounts.length
+                ? "No sub-accounts have the Ad Tracking app yet"
+                : undefined
+          }
+        />
       </td>
       <td>
         <span className="at-acct" data-tip="Pulled from Meta. Rename it in Meta.">
@@ -79,10 +115,17 @@ function ClientRow({ a }: { a: Account }) {
       </td>
       <td>
         <CalendarMenu
-          calendars={ghl ? calendarsFor(ghl.id) : []}
-          value={calendarsOf(a.id)}
-          onChange={(ids) => setCalendars(a.id, ids)}
-          locked={ghl ? undefined : "Pick the GHL account first"}
+          calendars={calendars}
+          value={picked.map((c) => c.id)}
+          onChange={(ids) =>
+            setCalendars(
+              a.id,
+              calendars.filter((c) => ids.includes(c.id)).map((c) => ({ id: c.id, name: c.name }))
+            )
+          }
+          locked={!ghl ? "Pick the GHL account first" : crm.state === "off" ? crm.why : undefined}
+          onOpen={openCalendars}
+          note={calNote}
         />
       </td>
       <td>
@@ -114,9 +157,29 @@ function ClientRow({ a }: { a: Account }) {
 }
 
 export default function ClientsPage() {
-  const { ready, accounts, removed, source, error, setRemoved } = useTracker();
+  const { ready, accounts, removed, source, error, setRemoved, refreshCrm } = useTracker();
   const by = (s: string) => accounts.filter((a) => a.status === s).length;
   const counted = ready && source !== "error";
+
+  /* back from installing the GHL app (/api/crm/callback): say how it went, once */
+  const refresh = useRef(refreshCrm);
+  refresh.current = refreshCrm;
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const crm = q.get("crm");
+    if (!crm) return;
+    /* a tick later: the shell's toast mounts after this page on a fresh load */
+    const id = window.setTimeout(() => {
+      window.history.replaceState(null, "", window.location.pathname);
+      if (crm === "connected") {
+        refresh.current();
+        v2toast("GHL connected");
+      } else {
+        v2toast(`GHL install didn't finish. ${q.get("why") || "Open the install link again."}`, "x");
+      }
+    });
+    return () => window.clearTimeout(id);
+  }, []);
 
   return (
     <section className="dash ld at-page">

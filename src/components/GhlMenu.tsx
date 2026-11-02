@@ -14,12 +14,19 @@ export function GhlMenu({
   match,
   value,
   onChange,
+  locked,
+  note,
 }: {
   accounts: GhlAccount[];
   /** the client's ad account name, for the suggestions */
   match: string;
-  value?: string;
-  onChange: (id: string | null) => void;
+  /** the linked sub-account (shown even before the list arrives) */
+  value?: GhlAccount;
+  onChange: (account: GhlAccount | null) => void;
+  /** why it can't be used yet (its tooltip); the picker stays dimmed and shut */
+  locked?: string;
+  /** a quiet line in the menu, e.g. while the sub-accounts load */
+  note?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const mh = useRef<HTMLElement>(null);
@@ -51,12 +58,12 @@ export function GhlMenu({
     m.classList.add("on");
   };
 
-  const picked = accounts.find((g) => g.id === value);
+  const picked = value ? (accounts.find((g) => g.id === value.id) ?? value) : undefined;
   const suggested = seen ? suggestedFor(match, accounts) : [];
   const others = seen ? accounts.filter((g) => !suggested.includes(g)) : [];
 
   const item = (g: GhlAccount) => {
-    const on = g.id === value;
+    const on = g.id === value?.id;
     return (
       <button
         key={g.id}
@@ -66,7 +73,7 @@ export function GhlMenu({
         onMouseEnter={(e) => hover(e.currentTarget)}
         onClick={() => {
           setOpen(false);
-          onChange(on ? null : g.id);
+          onChange(on ? null : g);
         }}
       >
         <span className="ld-ck">{on && <V2Icon name="check" />}</span>
@@ -76,13 +83,16 @@ export function GhlMenu({
   };
 
   return (
-    <div ref={ref} className={`ld-pop ld-ask at-calm at-ghlm${open ? " open" : ""}${up ? " up" : ""}`}>
+    <div ref={ref} className={`ld-pop ld-ask at-calm at-ghlm${open && !locked ? " open" : ""}${up ? " up" : ""}`}>
       <button
         type="button"
-        className={`ld-stb ld-oc${picked ? " set" : ""}`}
+        className={`ld-stb ld-oc${picked && !locked ? " set" : ""}`}
         aria-haspopup="menu"
-        aria-expanded={open}
+        aria-expanded={open && !locked}
+        aria-disabled={locked ? true : undefined}
+        data-tip={locked}
         onClick={() => {
+          if (locked) return;
           const r = ref.current?.getBoundingClientRect();
           setUp(!!r && r.bottom + 380 > window.innerHeight);
           setSeen(true);
@@ -94,6 +104,7 @@ export function GhlMenu({
       </button>
       <div className="menu" role="menu" onMouseLeave={() => mh.current?.classList.remove("on")}>
         <i className="mh" ref={mh} aria-hidden="true" />
+        {note && <p className="at-note">{note}</p>}
         {suggested.length > 0 && <h6>Suggested · name match</h6>}
         {suggested.map(item)}
         {others.length > 0 && <h6>{suggested.length ? "Other accounts" : "All accounts"}</h6>}

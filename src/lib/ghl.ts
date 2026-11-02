@@ -7,6 +7,8 @@
 export interface BookingCalendar {
   id: string;
   name: string;
+  /** from GHL's meeting type; when missing, the name decides */
+  inPerson?: boolean;
 }
 
 /** a GHL sub-account a client can be linked to */

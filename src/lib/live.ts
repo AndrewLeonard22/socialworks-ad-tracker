@@ -131,3 +131,101 @@ export const loadDetails = (accountId: string) =>
 const previews = new Map<string, Promise<AdPreview>>();
 /** Meta's preview of one ad (its signed URL lasts about a day) */
 export const loadPreview = (adId: string) => once(previews, adId, `/api/meta/preview/${adId}`);
+
+/* ---------- client settings (shared) and GoHighLevel ---------- */
+
+/** a GHL sub-account or calendar as the pages keep it: id plus the name it had when picked */
+export interface Named {
+  id: string;
+  name: string;
+}
+
+/** what the Clients tab saves for one client (keyed by its Meta ad account id) */
+export interface ClientSettings {
+  name?: string;
+  status?: "active" | "paused" | "churned";
+  /** the linked GHL sub-account */
+  ghl?: Named;
+  /** booking calendars picked in that sub-account */
+  calendars?: Named[];
+  removed?: boolean;
+}
+
+export type SettingsMap = Record<string, ClientSettings>;
+/** a change to one client; null clears a field */
+export type SettingsPatch = { [K in keyof ClientSettings]?: ClientSettings[K] | null };
+
+export type SettingsReply = { ok: true; settings: SettingsMap } | { ok: false; message: string };
+
+async function send<T>(url: string, method: string, body: unknown): Promise<T> {
+  const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const out = await res.json().catch(() => null);
+  if (!res.ok || !out) throw new Error(out?.message || `Request failed (HTTP ${res.status})`);
+  return out as T;
+}
+
+/** everything the Clients tab saved, for every client */
+export const loadSettings = () => get<SettingsReply>("/api/clients");
+/** save one client's change; answers with that client's saved settings */
+export const saveSettings = (id: string, patch: SettingsPatch) =>
+  send<{ ok: true; settings: ClientSettings }>("/api/clients", "PATCH", { id, patch });
+/** first visit after the move to the database: copy this browser's edits up (fills only clients with nothing saved) */
+export const importSettings = (settings: SettingsMap) => send<SettingsReply>("/api/clients", "POST", { import: settings });
+
+/** a booking calendar of a GHL sub-account */
+export interface CrmCalendar extends Named {
+  /** meets in person (an address, or the name says so): suggested first */
+  inPerson: boolean;
+}
+
+export type CrmFail = { ok: false; reason: "not-connected" | "reinstall" | "config" | "error"; message: string };
+export type CrmAccounts = { ok: true; accounts: Named[] } | CrmFail;
+export type CrmCalendars = { ok: true; calendars: CrmCalendar[] } | CrmFail;
+/** per client: one key per person booked in the range (hashed), so totals can count a shared calendar once */
+export type CrmAppointments =
+  | { ok: true; booked: Record<string, string[]>; errors?: { id: string; message: string }[] }
+  | CrmFail;
+
+const crmFail = (e: Error): CrmFail => ({ ok: false, reason: "error", message: `Couldn't reach GoHighLevel. ${e.message}` });
+
+let crmAccounts: { at: number; p: Promise<CrmAccounts> } | null = null;
+/** the GHL sub-accounts the Ad Tracking app is installed on (kept for a minute) */
+export function loadCrmAccounts(fresh = false): Promise<CrmAccounts> {
+  if (!fresh && crmAccounts && Date.now() - crmAccounts.at < 60000) return crmAccounts.p;
+  const p = get<CrmAccounts>("/api/crm/accounts").catch(crmFail);
+  const entry = { at: Date.now(), p };
+  crmAccounts = entry;
+  p.then((a) => {
+    if (!a.ok && crmAccounts === entry) crmAccounts = null;
+  });
+  return p;
+}
+
+const calendarLists = new Map<string, Promise<CrmCalendars>>();
+/** a sub-account's active booking calendars, fetched the first time its picker opens */
+export function loadCalendars(locationId: string): Promise<CrmCalendars> {
+  let p = calendarLists.get(locationId);
+  if (!p) {
+    p = get<CrmCalendars>(`/api/crm/calendars/${encodeURIComponent(locationId)}`).catch(crmFail);
+    calendarLists.set(locationId, p);
+    p.then((c) => !c.ok && calendarLists.get(locationId) === p && calendarLists.delete(locationId));
+  }
+  return p;
+}
+
+const bookings = new Map<string, { at: number; p: Promise<CrmAppointments> }>();
+/** appointments booked over [from, to] on every client's picked calendars (kept for a minute) */
+export function loadAppointments(from: string, to: string): Promise<CrmAppointments> {
+  const key = `${from}|${to}`;
+  const hit = bookings.get(key);
+  if (hit && Date.now() - hit.at < 60000) return hit.p;
+  const p = get<CrmAppointments>(`/api/crm/appointments?from=${from}&to=${to}`).catch(crmFail);
+  bookings.set(key, { at: Date.now(), p });
+  p.then((a) => {
+    if ((!a.ok || a.errors?.length) && bookings.get(key)?.p === p) bookings.delete(key);
+  });
+  return p;
+}
+
+/** forget fetched appointments (a client's links or calendars changed) */
+export const clearAppointments = () => bookings.clear();

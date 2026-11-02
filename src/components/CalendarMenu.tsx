@@ -15,12 +15,18 @@ export function CalendarMenu({
   value,
   onChange,
   locked,
+  onOpen,
+  note,
 }: {
   calendars: BookingCalendar[];
   value: string[];
   onChange: (ids: string[]) => void;
   /** why it can't be used yet (its tooltip); the picker stays dimmed and shut */
   locked?: string;
+  /** called as the menu opens (the calendars load then) */
+  onOpen?: () => void;
+  /** a quiet line in the menu, e.g. while the calendars load */
+  note?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const mh = useRef<HTMLElement>(null);
@@ -51,8 +57,9 @@ export function CalendarMenu({
   };
 
   const picked = calendars.filter((c) => value.includes(c.id));
-  const suggested = calendars.filter((c) => isInPerson(c.name));
-  const others = calendars.filter((c) => !isInPerson(c.name));
+  const inPerson = (c: BookingCalendar) => c.inPerson ?? isInPerson(c.name);
+  const suggested = calendars.filter(inPerson);
+  const others = calendars.filter((c) => !inPerson(c));
   const label = !picked.length ? "Pick calendars" : picked.length === 1 ? picked[0].name : `${picked.length} calendars`;
 
   const item = (c: BookingCalendar) => {
@@ -85,6 +92,7 @@ export function CalendarMenu({
           if (locked) return;
           const r = ref.current?.getBoundingClientRect();
           setUp(!!r && r.bottom + 300 > window.innerHeight);
+          if (!open) onOpen?.();
           setOpen((o) => !o);
         }}
       >
@@ -93,6 +101,7 @@ export function CalendarMenu({
       </button>
       <div className="menu" role="menu" onMouseLeave={() => mh.current?.classList.remove("on")}>
         <i className="mh" ref={mh} aria-hidden="true" />
+        {note && <p className="at-note">{note}</p>}
         {suggested.length > 0 && <h6>Suggested · in person</h6>}
         {suggested.map(item)}
         {others.length > 0 && <h6>Other calendars</h6>}
