@@ -297,6 +297,21 @@ const pv = await meta.getPreview("77");
 assert.deepEqual(pv, { src: "https://www.facebook.com/ads/api/preview_iframe.php?d=AQ1&t=AQ2", width: 335, height: 450 });
 assert.equal(calls.at(-1).searchParams.get("ad_format"), "MOBILE_FEED_STANDARD");
 ok("preview: /<ad id>/previews?ad_format=MOBILE_FEED_STANDARD, signed iframe src returned as is");
+env({ META_ACCESS_TOKEN: "TOKEN_S", META_APP_SECRET: "WRONG_APP_SECRET" });
+stub((u) => {
+  if (u.searchParams.get("appsecret_proof")) {
+    return reply(400, { error: { message: "Invalid appsecret_proof provided in the API argument", type: "GraphMethodException", code: 100 } });
+  }
+  if (u.pathname === "/v26.0/me/adaccounts") return reply(200, { data: [{ id: "act_5", name: "Test 5", account_status: 1, currency: "USD" }] });
+  if (u.pathname === "/v26.0/act_5/insights") return reply(200, { data: [row("7.00", leadActions)] });
+  return reply(400, { error: { message: "unexpected call", code: 100 } });
+});
+const healed = await meta.getOverview("2026-10-01", "2026-10-31");
+assert.deepEqual([healed.live, healed.accounts[0].spend, healed.accounts[0].leads], [true, 7, 4]);
+assert.equal(calls.filter((u) => u.searchParams.get("appsecret_proof")).length, 1);
+const roster = await meta.getAccounts();
+assert.deepEqual(roster, { live: true, accounts: [{ id: "act_5", name: "Test 5", status: 1, currency: "USD" }] });
+ok("an app secret from a different app: one refused signed call, then unsigned calls get the numbers; the light roster read works");
 globalThis.fetch = realFetch;
 
 console.log(`\nAll ${checks} checks passed.\n`);

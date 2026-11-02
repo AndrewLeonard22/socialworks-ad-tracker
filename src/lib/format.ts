@@ -50,7 +50,7 @@ export const initials = (name: string) =>
   name
     .replace(/[^A-Za-z0-9 ]/g, " ")
     .split(/\s+/)
-    .filter((w) => w && !/^(SWP|LLC|Ads?|Meta|Main|Acct|Account|Co)$/i.test(w))
+    .filter((w) => w && !/^(SWP|SW|X|SocialWorks|LLC|Inc|Ads?|Meta|Main|Acct|Account|Co)$/i.test(w))
     .slice(0, 2)
     .map((w) => w[0].toUpperCase())
     .join("");

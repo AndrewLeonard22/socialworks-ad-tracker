@@ -35,6 +35,9 @@
 /* breathing room so Revenue never sits on the row edge (open rows have a wash) */
 .rp-tbl.at-tbl td:last-child,.rp-tbl.at-tbl th:last-child{padding-right:20px}
 .at-tbl tbody tr{cursor:pointer}
+.at-tbl tbody tr.at-flat{cursor:default}
+/* status still on its way from Meta: the proto skeleton bar (.ec-card b) with its live pulse */
+.at-skel{display:inline-block;width:48px;height:8px;border-radius:4px;background:#E4E5E8;vertical-align:1px;animation:livePulse 1.4s ease-in-out infinite}
 .at-tbl tbody tr.at-l2{cursor:default}
 .v2-root button.at-nm{letter-spacing:inherit}
 .at-nm{display:flex;align-items:center;gap:12px;width:100%;min-width:0;text-align:left;color:inherit}
@@ -74,7 +77,8 @@
 .at-page .d-kpis,.at-page .rp-tblw{transition:opacity .25s}
 .at-page .at-dim{opacity:.5}
 /* preview drawer: Meta's iframe at its own size, centred in .db */
-.at-prev{flex:none;align-self:center;max-width:100%;border:0}
+/* the preview fills the drawer's height, so the whole ad shows without scrolling */
+.at-prev{flex:1 1 auto;min-height:0;align-self:center;width:min(100%,var(--w,540px));border:0}
 
 /* ---------- calendar ---------- */
 .at-calbar{gap:10px;flex-wrap:wrap}
@@ -158,3 +162,5 @@
   .dp-ind{display:none}
   .dp-pre button[aria-pressed="true"]{background:#fff}
 }
+/* phones: the proto drawer insets 8px from each side, so slide it fully out when closed */
+@media (max-width:760px){.drawer:not(.on){transform:translateX(calc(100% + 16px))}}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { preconnect } from "react-dom";
 import type { CSSProperties } from "react";
 import { AdPreview } from "@/components/AdPreview";
 import type { PreviewAd } from "@/components/AdPreview";
@@ -13,7 +14,7 @@ import { emptyTotals, isRunning, rollup } from "@/lib/data";
 import type { Account } from "@/lib/data";
 import { derived, initials } from "@/lib/format";
 import type { Metrics } from "@/lib/format";
-import { isoDay, loadDetails, loadOverview } from "@/lib/live";
+import { isoDay, loadDetails, loadOverview, loadPreview } from "@/lib/live";
 import type { AccountDetails, MetaAccount, Overview } from "@/lib/live";
 import { accountFromMeta, displayName, useTracker } from "@/lib/store";
 
@@ -193,15 +194,26 @@ export default function DashboardPage() {
   );
   const k = derived(addUp(source === "dummy" ? emptyTotals() : { spend: 0, leads: 0 }, shown));
   const toggle = (id: string) => setOpen((o) => ({ ...o, [id]: !o[id] }));
-  /* a live account's statuses and thumbnails load the first time it opens */
-  const toggleAccount = (r: Row) => {
+  /* a live account's statuses and thumbnails load when it is hovered or first opened;
+     if Meta can't send them, the rows just go without (no endless placeholder) */
+  const empty = (r: Row) => live && !r.error && !r.campaigns.length;
+  const fetchDetails = (r: Row) => {
     const id = r.account.id;
-    toggle(id);
-    if (!live || r.error || details[id]) return;
+    if (!live || r.error || !r.campaigns.length || details[id]) return;
     loadDetails(id).then(
       (d) => setDetails((m) => ({ ...m, [id]: d })),
-      () => {}
+      () => setDetails((m) => (m[id] ? m : { ...m, [id]: { status: {}, thumbs: {} } }))
     );
+  };
+  const toggleAccount = (r: Row) => {
+    if (empty(r)) return;
+    toggle(r.account.id);
+    fetchDetails(r);
+  };
+  /* Meta's preview starts loading when a thumbnail is hovered */
+  const warmPreview = (adId: string) => {
+    preconnect("https://www.facebook.com");
+    loadPreview(adId).catch(() => {});
   };
   const closePreview = useCallback(() => setPreview(null), []);
 
@@ -285,29 +297,33 @@ export default function DashboardPage() {
               const sub = [
                 a.businessName.trim() ? a.adAccountName : null,
                 a.status !== "active" ? st : null,
-                r.error ?? plural(campaigns.length, "campaign"),
+                r.error ?? (empty(r) ? "No spend in this range" : plural(campaigns.length, "campaign")),
               ]
                 .filter(Boolean)
                 .join(" · ");
               const det = details[a.id];
+              /* live rows whose Meta statuses are still on the way */
+              const pending = live && !r.error && !det;
               /* dummy rows carry a status; live rows read Meta's once the account's details are in */
               const stOf = (x: { id: string; st?: St }) => x.st ?? metaSt(det?.status[x.id]);
               return (
                 <Fragment key={a.id}>
-                  <tr className={`at-row at-l0${aOpen ? " open" : ""}`} onClick={() => toggleAccount(r)}>
+                  <tr
+                    className={`at-row at-l0${aOpen ? " open" : ""}${empty(r) ? " at-flat" : ""}`}
+                    onClick={() => toggleAccount(r)}
+                    onMouseEnter={() => fetchDetails(r)}
+                  >
                     <td>
                       <button
                         type="button"
                         className="at-nm"
-                        aria-expanded={aOpen}
+                        aria-expanded={empty(r) ? undefined : aOpen}
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleAccount(r);
                         }}
                       >
-                        <span className="at-chev">
-                          <V2Icon name="chevD" />
-                        </span>
+                        <span className="at-chev">{!empty(r) && <V2Icon name="chevD" />}</span>
                         <span className={`ld-av at-c${a.tone}`}>{initials(name)}</span>
                         <span className="at-tx">
                           <b data-tip={name}>{hl(name, query)}</b>
@@ -378,8 +394,10 @@ export default function DashboardPage() {
                                           <i className={`at-live${sst.on ? " on" : ""}`} />
                                           {sst.label}
                                         </>
+                                      ) : pending ? (
+                                        <i className="at-skel" aria-hidden="true" />
                                       ) : (
-                                        " "
+                                        "\u00a0"
                                       )}
                                     </small>
                                   </span>
@@ -424,6 +442,8 @@ export default function DashboardPage() {
                                                 type="button"
                                                 className="ad-ic"
                                                 aria-label={`Preview ${ad.name}`}
+                                                onMouseEnter={() => warmPreview(ad.id)}
+                                                onFocus={() => warmPreview(ad.id)}
                                                 onClick={() => setPreview({ id: ad.id, name: ad.name, sub: name })}
                                               >
                                                 {thumb ? (
@@ -441,8 +461,10 @@ export default function DashboardPage() {
                                                       <i className={`at-live${dst.on ? " on" : ""}`} />
                                                       {dst.label}
                                                     </>
+                                                  ) : pending ? (
+                                                    <i className="at-skel" aria-hidden="true" />
                                                   ) : (
-                                                    " "
+                                                    "\u00a0"
                                                   )}
                                                 </small>
                                               </span>

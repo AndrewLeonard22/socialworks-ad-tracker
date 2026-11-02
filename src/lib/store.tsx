@@ -1,9 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { presetRange } from "@/components/DatePop";
-import { isoDay, loadOverview, onLiveOverview } from "@/lib/live";
-import type { MetaAccount } from "@/lib/live";
+import { loadAccounts, onLiveOverview } from "@/lib/live";
+import type { AccountInfo } from "@/lib/live";
 import { buildAccounts, todayNum } from "./data";
 import type { Account, ClientStatus } from "./data";
 
@@ -50,7 +49,7 @@ export const accountFromMeta = (m: { id: string; name: string }): Account => ({
 export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const [today, setToday] = useState<number | null>(null);
   const [over, setOver] = useState<Record<string, Override>>({});
-  const [meta, setMeta] = useState<{ source: Source; error: string; list: MetaAccount[] }>({
+  const [meta, setMeta] = useState<{ source: Source; error: string; list: AccountInfo[] }>({
     source: "loading",
     error: "",
     list: [],
@@ -70,18 +69,17 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     return () => window.clearTimeout(id);
   }, []);
 
-  /* one request decides where the numbers come from: without a Meta token the
-     app keeps its dummy data, otherwise the clients are the token's ad accounts.
-     It asks for the dashboard's opening range, so the dashboard reuses it. */
+  /* one light request (ad accounts only, no numbers) decides where the numbers come
+     from: without a Meta token the app keeps its dummy data, otherwise the clients
+     are the token's ad accounts. The dashboard loads the numbers on its own. */
   useEffect(() => {
     if (today === null) return;
     let on = true;
-    const r = presetRange("30", today);
-    loadOverview(isoDay(r.from), isoDay(r.to)).then((o) => {
+    loadAccounts().then((a) => {
       if (!on) return;
-      if (o.live) setMeta({ source: "live", error: "", list: o.accounts });
-      else if (o.reason === "no-token") setMeta({ source: "dummy", error: "", list: [] });
-      else setMeta({ source: "error", error: o.message, list: [] });
+      if (a.live) setMeta({ source: "live", error: "", list: a.accounts });
+      else if (a.reason === "no-token") setMeta({ source: "dummy", error: "", list: [] });
+      else setMeta({ source: "error", error: a.message, list: [] });
     });
     return () => {
       on = false;

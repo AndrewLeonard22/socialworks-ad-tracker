@@ -15,7 +15,7 @@
 import { createHash, createHmac } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { AccountDetails, AdPreview, MetaAccount, MetaCampaign, MetaNode, Overview } from "./live";
+import type { AccountDetails, AccountList, AdPreview, MetaAccount, MetaCampaign, MetaNode, Overview } from "./live";
 
 const VERSION = "v26.0";
 const MIN = 60000;
@@ -133,16 +133,21 @@ async function send(url: URL, form?: URLSearchParams): Promise<Reply> {
   return { status: res.status, body: await res.json().catch(() => null) };
 }
 
+/* If META_APP_SECRET belongs to a different app than the token, Meta refuses every
+   signed call. The proof is optional unless the app turns on "Require App Secret",
+   so after the first refusal calls go out unsigned and a warning is logged once. */
+let unsigned = false;
+
 /** one Graph call (GET, or a POST when `post` is given), signed, with one retry on temporary errors */
 async function graph(path: string, params: Record<string, string> = {}, post?: Record<string, string>): Promise<Json> {
-  const auth: Record<string, string> = { access_token: token() || "fixture" };
-  const secret = process.env.META_APP_SECRET?.trim();
-  if (secret) auth.appsecret_proof = appsecretProof(auth.access_token, secret);
-  const url = new URL(`https://graph.facebook.com/${version()}${path ? `/${path}` : ""}`);
-  const form = post ? new URLSearchParams({ ...post, ...auth }) : undefined;
-  if (!post) url.search = new URLSearchParams({ ...params, ...auth }).toString();
-
   for (let attempt = 0; ; attempt++) {
+    const auth: Record<string, string> = { access_token: token() || "fixture" };
+    const secret = process.env.META_APP_SECRET?.trim();
+    if (secret && !unsigned) auth.appsecret_proof = appsecretProof(auth.access_token, secret);
+    const url = new URL(`https://graph.facebook.com/${version()}${path ? `/${path}` : ""}`);
+    const form = post ? new URLSearchParams({ ...post, ...auth }) : undefined;
+    if (!post) url.search = new URLSearchParams({ ...params, ...auth }).toString();
+
     let reply: Reply;
     try {
       reply = await send(url, form);
@@ -158,6 +163,12 @@ async function graph(path: string, params: Record<string, string> = {}, post?: R
       Number(err?.code) || 0,
       Number(err?.error_subcode) || 0
     );
+    if (auth.appsecret_proof && /appsecret_proof/i.test(e.message)) {
+      console.warn("[meta] META_APP_SECRET doesn't match the token's app; calling without appsecret_proof");
+      unsigned = true;
+      attempt = -1;
+      continue;
+    }
     if (attempt === 0 && (RETRY_CODES.has(e.code) || (!err && status >= 500))) {
       await new Promise((r) => setTimeout(r, 1500 + Math.random() * 1000));
       continue;
@@ -297,12 +308,21 @@ const AD_STATUSES = [
   "PENDING_BILLING_INFO", "CAMPAIGN_PAUSED", "ARCHIVED", "ADSET_PAUSED", "IN_PROCESS", "WITH_ISSUES",
 ];
 
+/* How live the numbers are: a range that reaches today or yesterday is re-read from
+   Meta after 2 minutes (Meta itself needs a few minutes to report new spend and
+   leads); older ranges barely change, so they keep their numbers for 15 minutes.
+   Server time is UTC, so "recent" gets a day of slack for US time zones. */
+function insightsTtl(to: string) {
+  const recent = new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10);
+  return to >= recent ? 2 * MIN : 15 * MIN;
+}
+
 /** set once Meta refuses the status filter, so later calls skip straight to the plain query */
 let plainInsights = false;
 
 /** one ad-level insights call per account: one row per ad that delivered in [from, to] */
 function adRows(accountId: string, from: string, to: string): Promise<InsightRow[]> {
-  return cached(`insights:${accountId}:${from}:${to}`, 10 * MIN, async () => {
+  return cached(`insights:${accountId}:${from}:${to}`, insightsTtl(to), async () => {
     const params = {
       level: "ad",
       fields: "campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,spend,actions",
@@ -326,7 +346,32 @@ function adRows(accountId: string, from: string, to: string): Promise<InsightRow
 }
 
 const adAccounts = () =>
-  cached("accounts", 60 * MIN, () => all("me/adaccounts", { fields: "id,name,account_status,currency", limit: "100" }));
+  /* a new ad account that starts spending shows up within 15 minutes */
+  cached("accounts", 15 * MIN, () => all("me/adaccounts", { fields: "id,name,account_status,currency", limit: "100" }));
+
+/** just the ad accounts (no numbers): fast, so Clients and Calendar don't wait on insights */
+export async function getAccounts(): Promise<AccountList> {
+  if (!metaConfigured()) return { live: false, reason: "no-token" };
+  try {
+    const list = await adAccounts();
+    return {
+      live: true,
+      accounts: list.map((a) => ({
+        id: String(a.id),
+        name: String(a.name || a.id),
+        status: Number(a.account_status) || 0,
+        currency: String(a.currency || ""),
+      })),
+    };
+  } catch (e) {
+    console.error("[meta] ad accounts:", e instanceof Error ? e.message : e);
+    const message =
+      e instanceof MetaError && TOKEN_CODES.has(e.code)
+        ? tokenMessage(e)
+        : `Couldn't read the ad accounts from Meta: ${e instanceof Error ? e.message : "unknown error"}`;
+    return { live: false, reason: "meta-error", message };
+  }
+}
 
 /** every ad account the token can see, each with spend and leads for [from, to] (YYYY-MM-DD, inclusive) */
 export async function getOverview(from: string, to: string): Promise<Overview> {
@@ -400,7 +445,7 @@ async function sharpThumbs(creativeIds: string[]): Promise<Record<string, string
 /** effective_status of every campaign, ad set and ad in act_<digits>, and each ad's thumbnail */
 export function getAccountDetails(digits: string): Promise<AccountDetails> {
   const act = `act_${digits}`;
-  return cached(`details:${act}`, 60 * MIN, async () => {
+  return cached(`details:${act}`, 10 * MIN, async () => {
     const [campaigns, adsets, ads] = await Promise.all([
       all(`${act}/campaigns`, { fields: "id,effective_status", limit: "500" }),
       all(`${act}/adsets`, { fields: "id,effective_status", limit: "500" }),

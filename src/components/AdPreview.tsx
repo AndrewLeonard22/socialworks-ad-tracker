@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { loadPreview } from "@/lib/live";
 import type { AdPreview as Frame } from "@/lib/live";
 import { V2Icon } from "./v2/icons";
@@ -64,8 +65,7 @@ export function AdPreview({ ad, onClose }: { ad: PreviewAd | null; onClose: () =
               key={cur.f.src}
               className="at-prev"
               src={cur.f.src}
-              width={cur.f.width || undefined}
-              height={cur.f.height || undefined}
+              style={{ "--w": `${cur.f.width || 540}px` } as CSSProperties}
               title={`Meta preview of ${shown?.name}`}
             />
           ) : (
