@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarMenu } from "@/components/CalendarMenu";
 import { DemoBadge } from "@/components/DemoBadge";
+import { GhlMenu } from "@/components/GhlMenu";
 import { STATUS, StatusMenu } from "@/components/StatusMenu";
 import { V2Brand, V2Icon } from "@/components/v2/icons";
 import { v2toast } from "@/components/v2/Toast";
@@ -12,7 +13,8 @@ import { calendarsFor } from "@/lib/ghl";
 import { displayName, useTracker } from "@/lib/store";
 
 function ClientRow({ a }: { a: Account }) {
-  const { setName, setStatus, calendarsOf, setCalendars, setRemoved } = useTracker();
+  const { setName, setStatus, ghlAccounts, ghlOf, setGhl, calendarsOf, setCalendars, setRemoved } = useTracker();
+  const ghl = ghlOf(a.id);
   const [val, setVal] = useState(a.businessName);
   const input = useRef<HTMLInputElement>(null);
   const cancel = useRef(false);
@@ -28,10 +30,14 @@ function ClientRow({ a }: { a: Account }) {
       return;
     }
     const v = val.trim();
-    setVal(v);
-    if (v === a.businessName.trim()) return;
+    if (v === a.businessName.trim()) {
+      setVal(a.businessName);
+      return;
+    }
     setName(a.id, v);
-    v2toast(v ? "Business name saved" : "Showing the ad account name instead");
+    /* cleared on a linked client: the name goes back to the GHL account's */
+    setVal(v || ghl?.name || "");
+    v2toast(v ? "Business name saved" : ghl ? "Showing the GHL account name instead" : "Showing the ad account name instead");
   };
 
   return (
@@ -63,6 +69,9 @@ function ClientRow({ a }: { a: Account }) {
         </div>
       </td>
       <td>
+        <GhlMenu accounts={ghlAccounts} match={a.adAccountName} value={ghl?.id} onChange={(g) => setGhl(a.id, g)} />
+      </td>
+      <td>
         <span className="at-acct" data-tip="Pulled from Meta. Rename it in Meta.">
           <V2Brand name="meta" />
           <span>{a.adAccountName}</span>
@@ -70,9 +79,10 @@ function ClientRow({ a }: { a: Account }) {
       </td>
       <td>
         <CalendarMenu
-          calendars={calendarsFor(a.id)}
+          calendars={ghl ? calendarsFor(ghl.id) : []}
           value={calendarsOf(a.id)}
           onChange={(ids) => setCalendars(a.id, ids)}
+          locked={ghl ? undefined : "Pick the GHL account first"}
         />
       </td>
       <td>
@@ -129,6 +139,7 @@ export default function ClientsPage() {
         <thead>
           <tr>
             <th>Business name</th>
+            <th>GHL account</th>
             <th>Ad account name</th>
             <th>Booking calendar</th>
             <th>Status</th>
@@ -141,7 +152,7 @@ export default function ClientsPage() {
           ))}
           {source === "error" && (
             <tr className="at-none">
-              <td colSpan={5}>{error}</td>
+              <td colSpan={6}>{error}</td>
             </tr>
           )}
         </tbody>

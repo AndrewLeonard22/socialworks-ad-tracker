@@ -122,20 +122,28 @@
 
 /* ---------- clients ---------- */
 .at-ctbl{min-width:0;table-layout:fixed}
-.at-ctbl th:nth-child(1){width:30%}
-.at-ctbl th:nth-child(2){width:26%}
-.at-ctbl th:nth-child(3){width:22%}
-.at-ctbl th:nth-child(4){width:14%}
-.at-ctbl th:nth-child(5){width:8%}
+.at-ctbl th:nth-child(1){width:27%}
+.at-ctbl th:nth-child(2){width:17%}
+.at-ctbl th:nth-child(3){width:21%}
+.at-ctbl th:nth-child(4){width:18.5%}
+.at-ctbl th:nth-child(5){width:11%}
+.at-ctbl th:nth-child(6){width:5.5%}
 .at-ctbl td:last-child{text-align:right}
 /* removed clients: name, ad account, Add back */
 .at-rtbl th:nth-child(1){width:44%}
 .at-rtbl th:nth-child(2){width:40%}
 .at-rtbl th:nth-child(3){width:16%}
 .at-rname{font-size:15px;font-weight:500;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* booking calendar picker: the status menu, multi-select, grouped like the proto filter menu (.ld-fg h6) */
+/* booking calendar and GHL account pickers: the status menu, grouped like the proto filter menu (.ld-fg h6) */
 .at-calm .menu{min-width:240px}
 .at-calm .menu h6{margin:0;padding:10px 12px 6px;font-size:13px;font-weight:400;color:var(--muted)}
+/* a long name ends in an ellipsis inside its pill (.ld-oc span) instead of running into the next column */
+.at-calm{max-width:100%}
+/* every sub-account is listed, so the menu scrolls (thin bar, like .ap-grid) */
+.at-ghlm .menu{max-height:min(360px,46vh);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+/* calendars wait for a GHL account: the proto disabled button (.ld-ff button:disabled), tooltip says why */
+.at-calm .ld-oc[aria-disabled="true"]{opacity:.55;cursor:default;filter:none}
+.at-calm .ld-oc[aria-disabled="true"]:hover{background:rgba(255,255,255,.42)}
 .at-ctbl tbody tr{cursor:default}
 .at-who{display:flex;align-items:center;gap:14px;min-width:0}
 .at-ctbl .ld-av{width:40px;height:40px;font-size:13px}

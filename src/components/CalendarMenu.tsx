@@ -8,15 +8,19 @@ import { V2Icon } from "./v2/icons";
 /* Booking calendar picker for a client: the proto table-cell picker (.ld-oc,
    "pick something here") opening the same menu as the status dropdown, but
    multi-select: clicking a calendar ticks it and the menu stays open.
-   In-person consultation calendars are listed first as suggestions. */
+   In-person consultation calendars are listed first as suggestions.
+   Calendars belong to a GHL account, so it stays locked until one is linked. */
 export function CalendarMenu({
   calendars,
   value,
   onChange,
+  locked,
 }: {
   calendars: BookingCalendar[];
   value: string[];
   onChange: (ids: string[]) => void;
+  /** why it can't be used yet (its tooltip); the picker stays dimmed and shut */
+  locked?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const mh = useRef<HTMLElement>(null);
@@ -69,14 +73,16 @@ export function CalendarMenu({
   };
 
   return (
-    <div ref={ref} className={`ld-pop ld-ask at-calm${open ? " open" : ""}${up ? " up" : ""}`}>
+    <div ref={ref} className={`ld-pop ld-ask at-calm${open && !locked ? " open" : ""}${up ? " up" : ""}`}>
       <button
         type="button"
-        className={`ld-stb ld-oc${picked.length ? " set" : ""}`}
+        className={`ld-stb ld-oc${picked.length && !locked ? " set" : ""}`}
         aria-haspopup="menu"
-        aria-expanded={open}
-        data-tip={picked.length > 1 ? picked.map((c) => c.name).join(", ") : undefined}
+        aria-expanded={open && !locked}
+        aria-disabled={locked ? true : undefined}
+        data-tip={locked || (picked.length > 1 ? picked.map((c) => c.name).join(", ") : undefined)}
         onClick={() => {
+          if (locked) return;
           const r = ref.current?.getBoundingClientRect();
           setUp(!!r && r.bottom + 300 > window.innerHeight);
           setOpen((o) => !o);

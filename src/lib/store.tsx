@@ -5,12 +5,14 @@ import { loadAccounts, onLiveOverview } from "@/lib/live";
 import type { AccountInfo } from "@/lib/live";
 import { buildAccounts, todayNum } from "./data";
 import type { Account, ClientStatus } from "./data";
+import { ghlAccountsFrom } from "./ghl";
+import type { GhlAccount } from "./ghl";
 
-/* Business-name, status, booking-calendar and removed edits live in this browser
-   until there is a backend to save them to. Ad account names always come from Meta. */
+/* Business-name, GHL account, status, booking-calendar and removed edits live in this
+   browser until there is a backend to save them to. Ad account names always come from Meta. */
 const KEY = "sw_adtracker_v1";
 
-type Override = { name?: string; status?: ClientStatus; calendars?: string[]; removed?: boolean };
+type Override = { name?: string; status?: ClientStatus; ghl?: string; calendars?: string[]; removed?: boolean };
 
 /** where the numbers come from: "dummy" without a Meta token, "live" from Meta, "error" when Meta failed */
 export type Source = "loading" | "dummy" | "live" | "error";
@@ -28,17 +30,23 @@ interface TrackerCtx {
   removed: Account[];
   /** ad account ids of removed clients */
   removedIds: Set<string>;
+  /** the GHL sub-accounts a client can be linked to */
+  ghlAccounts: GhlAccount[];
+  /** the GHL sub-account a client is linked to */
+  ghlOf: (id: string) => GhlAccount | undefined;
   /** booking calendar ids picked for a client */
   calendarsOf: (id: string) => string[];
   setName: (id: string, name: string) => void;
   setStatus: (id: string, status: ClientStatus) => void;
+  /** link a client to a GHL sub-account (null unlinks); its calendar picks start over */
+  setGhl: (id: string, ghlId: string | null) => void;
   setCalendars: (id: string, ids: string[]) => void;
   setRemoved: (id: string, removed: boolean) => void;
 }
 
 const Ctx = createContext<TrackerCtx | null>(null);
 
-/** business name, or the Meta ad account name when no business name is set */
+/** business name (typed, or the linked GHL account's), else the Meta ad account name */
 export const displayName = (a: Account) => a.businessName.trim() || a.adAccountName;
 
 /** a Meta ad account as a client: identity only (the dummy model fields stay empty) */
@@ -115,18 +123,27 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     return meta.list.map(accountFromMeta);
   }, [today, meta]);
 
+  /* DUMMY: one sub-account per client until GHL is connected */
+  const ghlAccounts = useMemo(
+    () => ghlAccountsFrom(base.map((a) => a.businessName.trim() || a.adAccountName)),
+    [base]
+  );
+  const ghlById = useMemo(() => new Map(ghlAccounts.map((g) => [g.id, g])), [ghlAccounts]);
+
   const all = useMemo(
     () =>
       base.map((a) => {
         const o = over[a.id];
         if (!o) return a;
+        const name = o.name !== undefined ? o.name : a.businessName;
         return {
           ...a,
-          businessName: o.name !== undefined ? o.name : a.businessName,
+          /* a typed name wins; otherwise the business name follows the linked GHL account */
+          businessName: name.trim() || (o.ghl && ghlById.get(o.ghl)?.name) || name,
           status: o.status ?? a.status,
         };
       }),
-    [base, over]
+    [base, over, ghlById]
   );
   /* a new ad account is on the tracker until someone removes it */
   const removedIds = useMemo(
@@ -157,13 +174,19 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       accounts,
       removed,
       removedIds,
+      ghlAccounts,
+      ghlOf: (id) => {
+        const g = over[id]?.ghl;
+        return g ? ghlById.get(g) : undefined;
+      },
       calendarsOf: (id) => over[id]?.calendars ?? [],
       setName: (id, name) => patch(id, { name }),
       setStatus: (id, status) => patch(id, { status }),
+      setGhl: (id, ghlId) => patch(id, { ghl: ghlId ?? undefined, calendars: [] }),
       setCalendars: (id, calendars) => patch(id, { calendars }),
       setRemoved: (id, r) => patch(id, { removed: r }),
     }),
-    [today, meta, accounts, removed, removedIds, over, patch]
+    [today, meta, accounts, removed, removedIds, ghlAccounts, ghlById, over, patch]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

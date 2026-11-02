@@ -1,11 +1,76 @@
-/* DUMMY GoHighLevel calendars until the GHL connection exists.
-   Each client gets a stable set of booking calendars generated from its ad
-   account id. When GHL is connected, replace `calendarsFor` with the calendars
-   of the client's sub-account and keep the same shape. */
+/* DUMMY GoHighLevel sub-accounts and calendars until the GHL connection exists.
+   Each client gets a stable sub-account (named like its ad account, without the
+   agency suffix) and each sub-account a stable set of booking calendars. When GHL
+   is connected, replace `ghlAccountsFrom` with the agency's sub-accounts and
+   `calendarsFor` with a sub-account's calendars, keeping the same shapes. */
 
 export interface BookingCalendar {
   id: string;
   name: string;
+}
+
+/** a GHL sub-account a client can be linked to */
+export interface GhlAccount {
+  id: string;
+  name: string;
+}
+
+/** an ad account name without the agency suffixes ("Washbroz X SocialWorks" -> "Washbroz") */
+export function cleanName(n: string) {
+  let s = n
+    .trim()
+    .replace(/\s+[x&]\s+(social\s*works|sw)\b.*$/i, "")
+    .replace(/^(swp|sw)\s*[|:-]\s*/i, "")
+    .replace(/\s*\((swp|sw)\)\s*$/i, "")
+    .replace(/\s+[-|]\s+(ads?|swp|sw|meta|main)\s*$/i, "")
+    .replace(/\s+(ad\s+account|ad\s+acct|ads)\s*$/i, "")
+    .trim();
+  if (s === s.toLowerCase()) s = s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  return s;
+}
+
+/** dummy sub-accounts: one per client name, A to Z (numeric-only names have none) */
+export function ghlAccountsFrom(names: string[]): GhlAccount[] {
+  const seen = new Map<string, GhlAccount>();
+  for (const raw of names) {
+    const name = cleanName(raw);
+    const key = name.toLowerCase();
+    if (!name || /^\d+$/.test(name) || seen.has(key)) continue;
+    seen.set(key, { id: `ghl_${hash(key).toString(36)}`, name });
+  }
+  return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
+}
+
+const STOP = new Set(["x", "sw", "swp", "socialworks", "social", "works", "llc", "inc", "co", "ad", "ads", "account", "acct", "the", "and", "meta", "main"]);
+const words = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter((w) => w && !STOP.has(w));
+
+/** how close two business names are, 0 to 1 */
+function closeness(a: string, b: string) {
+  const A = words(a);
+  const B = words(b);
+  if (!A.length || !B.length) return 0;
+  const ja = A.join("");
+  const jb = B.join("");
+  if (ja === jb) return 1;
+  if (Math.min(ja.length, jb.length) >= 4 && (ja.includes(jb) || jb.includes(ja))) return 0.9;
+  const sb = new Set(B);
+  const shared = new Set(A.filter((w) => sb.has(w))).size;
+  return (0.8 * shared) / Math.min(new Set(A).size, sb.size);
+}
+
+/** sub-accounts whose name is close to the client's ad account name, best first */
+export function suggestedFor(name: string, accounts: GhlAccount[]): GhlAccount[] {
+  return accounts
+    .map((g) => ({ g, s: closeness(name, g.name) }))
+    .filter((x) => x.s >= 0.6)
+    .sort((a, b) => b.s - a.s)
+    .slice(0, 3)
+    .map((x) => x.g);
 }
 
 /** in-person consultation calendars are the ones we suggest */
@@ -42,6 +107,7 @@ function rng(seed: number) {
   };
 }
 
+/** the booking calendars of a GHL sub-account */
 export function calendarsFor(accountId: string): BookingCalendar[] {
   const r = rng(hash(accountId + "ghl"));
   /* one in-person calendar for sure, then 2 to 4 others from the rest of the pool */
