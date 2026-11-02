@@ -238,6 +238,13 @@ assert.equal(dead.reason, "meta-error");
 assert.equal(calls.length, 1);
 assert.equal(calls[0].searchParams.get("appsecret_proof"), null);
 ok("dead token (code 190): meta-error after one call, no retry; no app secret, no proof");
+env({ META_ACCESS_TOKEN: ' "Bearer TOKEN_Q" ' });
+stub(() => reply(400, { error: { message: "Invalid OAuth access token - Cannot parse access token EAABsbCS1iHgBAKZBxyz123456789", type: "OAuthException", code: 190 } }));
+const pasted = await meta.getOverview("2026-10-01", "2026-10-31");
+assert.equal(calls[0].searchParams.get("access_token"), "TOKEN_Q");
+assert.match(pasted.message, /Meta says: "Invalid OAuth access token - Cannot parse access token \[token\]"/);
+assert.ok(!pasted.message.includes("EAABsbCS1iHgBAKZBxyz123456789"));
+ok("a pasted token loses its quotes and Bearer prefix; Meta's reason is shown with anything token-shaped masked");
 
 env({ META_ACCESS_TOKEN: "TOKEN_C" });
 stub((u) => {

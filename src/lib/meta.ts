@@ -31,7 +31,14 @@ const THUMB = 152;
 
 /* ---------- config ---------- */
 
-const token = () => process.env.META_ACCESS_TOKEN?.trim() ?? "";
+/* forgiving about how it was pasted: surrounding quotes or a "Bearer " prefix are dropped */
+const token = () =>
+  (process.env.META_ACCESS_TOKEN ?? "")
+    .trim()
+    .replace(/^["']+|["']+$/g, "")
+    .trim()
+    .replace(/^Bearer\s+/i, "")
+    .trim();
 
 const version = () => {
   const v = process.env.META_API_VERSION?.trim();
@@ -78,10 +85,17 @@ const RETRY_CODES = new Set([1, 2]);
 const TOKEN_MESSAGE =
   "Meta rejected the access token. Create a new system user token and update META_ACCESS_TOKEN in Vercel.";
 
+/** the token message plus Meta's own reason (expired, can't parse, password changed...),
+    with anything token-shaped masked so the token itself is never shown */
+const tokenMessage = (e: MetaError) => {
+  const why = e.message.replace(/EA[A-Za-z0-9]{10,}/g, "[token]").replace(/\s+/g, " ").trim();
+  return why ? `${TOKEN_MESSAGE} Meta says: "${why.length > 180 ? `${why.slice(0, 177)}...` : why}"` : TOKEN_MESSAGE;
+};
+
 /** a short, plain explanation of a failed Meta call */
 export function explain(e: unknown): string {
   if (!(e instanceof MetaError)) return "Something went wrong reading Meta";
-  if (TOKEN_CODES.has(e.code)) return TOKEN_MESSAGE;
+  if (TOKEN_CODES.has(e.code)) return tokenMessage(e);
   if (e.code === 200 || e.code === 10) return "No access to this ad account in Meta";
   if (RATE_CODES.has(e.code)) return "Meta rate limit reached, try again in a few minutes";
   if (e.code === 1 || e.code === 2) return "Meta is temporarily unavailable, try again shortly";
@@ -320,12 +334,12 @@ export async function getOverview(from: string, to: string): Promise<Overview> {
     console.error("[meta] ad accounts:", e instanceof Error ? e.message : e);
     const message =
       e instanceof MetaError && TOKEN_CODES.has(e.code)
-        ? TOKEN_MESSAGE
+        ? tokenMessage(e)
         : `Couldn't read the ad accounts from Meta: ${e instanceof Error ? e.message : "unknown error"}`;
     return { live: false, reason: "meta-error", message };
   }
 
-  let tokenDead = false;
+  let tokenDead: MetaError | null = null;
   const deadline = Date.now() + OVERVIEW_DEADLINE;
   const accounts = await pool(list, CONCURRENCY, async (a): Promise<MetaAccount> => {
     const base = {
@@ -340,13 +354,13 @@ export async function getOverview(from: string, to: string): Promise<Overview> {
       return { ...base, ...rollup(await withDeadline(adRows(base.id, from, to), deadline - Date.now())) };
     } catch (e) {
       console.error(`[meta] insights ${base.id}:`, e instanceof Error ? e.message : e);
-      if (e instanceof MetaError && TOKEN_CODES.has(e.code)) tokenDead = true;
+      if (e instanceof MetaError && TOKEN_CODES.has(e.code)) tokenDead = e;
       return { ...base, spend: 0, leads: 0, campaigns: [], error: explain(e) };
     }
   });
 
   const errors = accounts.filter((a) => a.error).map((a) => ({ id: a.id, message: a.error as string }));
-  if (tokenDead) return { live: false, reason: "meta-error", message: TOKEN_MESSAGE };
+  if (tokenDead) return { live: false, reason: "meta-error", message: tokenMessage(tokenDead) };
   if (accounts.length && errors.length === accounts.length) {
     return { live: false, reason: "meta-error", message: `Meta returned an error for every ad account: ${errors[0].message}` };
   }
