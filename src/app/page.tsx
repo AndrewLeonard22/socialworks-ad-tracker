@@ -140,7 +140,7 @@ function addUp(seed: Metrics, rows: Row[]) {
 }
 
 export default function DashboardPage() {
-  const { ready, today, accounts, source } = useTracker();
+  const { ready, today, accounts, source, removedIds } = useTracker();
   const [picked, setPicked] = useState<Range | null>(null);
   const [q, setQ] = useState("");
   const [open, setOpen] = useState<Record<string, boolean>>({});
@@ -172,7 +172,7 @@ export default function DashboardPage() {
   const failed = live && res && !res.o.live ? (res.o.reason === "meta-error" ? res.o.message : "Meta is not connected") : "";
   const hasNumbers = ready && (source === "dummy" || !!res?.o.live);
   /* accounts Meta couldn't read are left out of the totals: say so next to them */
-  const notLoaded = live && res?.o.live ? (res.o.errors?.length ?? 0) : 0;
+  const notLoaded = live && res?.o.live ? (res.o.errors ?? []).filter((e) => !removedIds.has(e.id)).length : 0;
 
   const byId = useMemo(() => new Map(accounts.map((a) => [a.id, a])), [accounts]);
   const rows = useMemo(() => {
@@ -181,10 +181,10 @@ export default function DashboardPage() {
       source === "dummy"
         ? dummyRows(accounts, range.from, range.to, today)
         : res?.o.live
-          ? liveRows(res.o.accounts, byId)
+          ? liveRows(res.o.accounts.filter((m) => !removedIds.has(m.id)), byId)
           : [];
     return list.sort((a, b) => (b.t.spend ?? -1) - (a.t.spend ?? -1));
-  }, [ready, source, accounts, range.from, range.to, today, res, byId]);
+  }, [ready, source, accounts, range.from, range.to, today, res, byId, removedIds]);
   const query = q.trim().toLowerCase();
   const shown = rows.filter(
     (r) =>
