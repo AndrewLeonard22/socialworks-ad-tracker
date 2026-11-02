@@ -1,0 +1,1013 @@
+@import "tailwindcss";
+
+/* Order anchor: proto sits between base and components so Tailwind
+   utilities still win over proto rules where both apply. */
+@layer theme, base, proto, components, utilities;
+
+/* The design system: SocialWorks-App styles.css verbatim (the proto is the
+   source of truth), loaded globally. Document-level rules (:root vars,
+   body resets) apply app-wide; component classes (.cta, .card, .rail...)
+   work anywhere without a scoping wrapper. To update the design, re-copy
+   styles.css into src/components/v2/swa.css. */
+@import "../components/v2/swa.css" layer(proto);
+
+@custom-variant dark (&:where(.dark, .dark *):not(:where(.theme-light, .theme-light *)));
+
+/*
+ * Design tokens extracted from the SocialWorks Pro landing page
+ * (html/landingpage/index.html, Figma file WDdMG2Rp907gkpJLHL1NT8).
+ * Semantic tokens below; components must not use raw hex values.
+ */
+
+:root {
+  /* Brand palette */
+  --color-brand: #00a3fe;
+  --color-brand-soft: #9fdcfe;
+  --color-navy: #0a183d;
+  --color-navy-2: #15244b;
+  --color-ink: #0e192b;
+  --color-navtext: #0d182c;
+  --color-overlay-end: #11416c;
+  --color-pill-border: #3f4b60;
+  --color-pill-bg: rgb(79 82 94 / 0.2);
+
+  /* Neutrals */
+  --color-heading: #262626;
+  --color-muted: #4a4a4a;
+  --color-subtle: #525252;
+  --color-faint: #737373;
+  --color-band: #f2f2f2;
+  --color-ghost-bg: #f9f9f9;
+  --color-row: #f0f5fe;
+  --color-hot: #fef3c6;
+
+  /* Borders */
+  --color-border: #e5e5e5;
+  --color-border-soft: #e8e8e8;
+  --color-border-strong: #c9c9c9;
+  --color-border-card: #d7d7d7;
+  --color-border-input: #e0e0e0;
+
+  /* Portal palette (SocialWorks-App prototype values, styles.css :root) */
+  --color-accent: #ff6a2b;
+  --color-app-ink: #0e0f11;
+  --color-app-navy: #1a1a1b;
+  --color-app-muted: #565a61;
+  --color-app-faint: #a3a7ad;
+  --color-app-line: #dcdddf;
+  --color-app-line-2: #c9cbce;
+  --color-app-line-3: #dcdddf;
+  --color-app-band: #efefef;
+  --color-app-band-2: #ecedef;
+  --color-app-dash: #a3a7ad;
+
+  /* Feedback */
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-foreground: #dc2626;
+  --color-danger-soft: rgb(220 38 38 / 0.08);
+
+  /* SocialWorks-App shell palette (SocialWorks-App/styles.css, light-only) */
+  --swa-frame: #000000;
+  --swa-rail: #1a1a1b;
+  --swa-rail-hover: #2a2a2c;
+  --swa-shell: #efefef;
+  --swa-card: #ffffff;
+  --swa-ink: #0e0f11;
+  --swa-ink-2: #3b3e44;
+  --swa-muted: #565a61;
+  --swa-faint: #a3a7ad;
+  --swa-line: #dcdddf;
+  --swa-chip: #ecedef;
+  --swa-accent: #ff6a2b;
+  --swa-ok: #2f9e5b;
+  --swa-ok-bg: #e6f5ec;
+  --swa-stripe: #635bff;
+  --swa-radius-card: 28px;
+  --swa-shadow: 0 10px 40px rgb(14 15 17 / 0.05);
+  --swa-btn-h: clamp(40px, 5vh, 56px);
+  --swa-btn-fs: clamp(14px, 1.6vh, 17px);
+  --swa-btn-px: clamp(18px, 1.7vw, 28px);
+  --swa-app-pad: 16px;
+  --swa-shell-pt: clamp(22px, 6.2vh, 80px);
+  --swa-shell-pb: clamp(18px, 4.2vh, 52px);
+
+  /* Proto brand/hero palettes (styles.css de-facto colors, context/design-system.md) */
+  --swa-blue: #3fa6e6;
+  --swa-blue-2: #14639f;
+  --swa-blue-deep: #0e5189;
+  --swa-blue-mid: #1f5fa8;
+  --swa-blue-ice: #9fd8ff;
+  --swa-hero-ice: #9fdcff;
+  --swa-navy: #0a2540;
+  --swa-blue-wash: #eef4ff;
+  --swa-blue-wash-2: #e3eef8;
+  --swa-lime: #b4d34a;
+  --swa-lime-hi: #cff27a;
+  --swa-olive: #6f8a1e;
+  --swa-olive-2: #9fc63b;
+  --swa-olive-deep: #2c3311;
+  --swa-green-2: #0f9d4a;
+  --swa-green-deep: #0a6630;
+  --swa-ok-soft: #eaf6ee;
+  --swa-gold: #ffc46b;
+  --swa-gold-2: #e4c04a;
+  --swa-gold-deep: #a47f1a;
+  --swa-gold-ink: #704a00;
+  --swa-gold-3: #3a2f0e;
+  --swa-violet: #8e83f5;
+  --swa-violet-deep: #4b3fc4;
+  --swa-violet-ink: #1e1650;
+  --swa-danger: #c0392b;
+  --swa-danger-soft: #ffc2c8;
+  --swa-out: #3a1a18;
+  --swa-out-hover: #55211d;
+  --swa-out-ink: #f08c82;
+  --swa-out-ink-2: #ffb3ab;
+
+  /* Proto neutral ramp (hardcoded greys in styles.css, grouped) */
+  --swa-gray-1: #f9f9fa;
+  --swa-gray-2: #f8f8f8;
+  --swa-gray-3: #f7f8f9;
+  --swa-gray-4: #f4f5f7;
+  --swa-gray-5: #f4f4f5;
+  --swa-gray-6: #f3f4f6;
+  --swa-gray-7: #f1f2f4;
+  --swa-gray-8: #f0f1f3;
+  --swa-gray-9: #eeeef1;
+  --swa-gray-10: #e9eaec;
+  --swa-gray-11: #e9e9ea;
+  --swa-gray-12: #e3e5e8;
+  --swa-mid-1: #9a9ea5;
+  --swa-mid-2: #8e9198;
+  --swa-mid-3: #6e7178;
+  --swa-mid-4: #5e6268;
+  --swa-disabled-ink: #55585e;
+  --swa-disabled-bg: #121213;
+  --swa-dark-2: #2a2c30;
+
+  /* Proto budget-gradient stops (.bl-plf) */
+  --swa-bud-1: #16b98a;
+  --swa-bud-2: #7ed13b;
+  --swa-bud-3: #ffc531;
+  --swa-bud-4: #ff7b3a;
+  --swa-bud-5: #ff4561;
+
+  /* Proto hero gradient chains (context/design-system.md) */
+  --swa-grad-blue: linear-gradient(120deg, #0a2540 0%, #0e5189 55%, #3fa6e6 100%);
+  --swa-grad-green: linear-gradient(120deg, #2c3311 0%, #6f8a1e 55%, #b4d34a 100%);
+  --swa-grad-gold: linear-gradient(120deg, #3a2f0e 0%, #a47f1a 55%, #e4c04a 100%);
+  --swa-grad-red: linear-gradient(120deg, #3a0e14 0%, #a0242f 55%, #e8505c 100%);
+  --swa-avatar-grad: linear-gradient(135deg, #3a3d44, #16171a);
+
+  /* Proto body type */
+  --swa-font: var(--font-urbanist), "Urbanist", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", sans-serif;
+  --swa-text: 14px;
+  --swa-tracking: 0.035em;
+  --swa-focus: var(--swa-accent);
+
+  /* Semantic surfaces + text (light theme) */
+  --color-surface: #ffffff;
+  --color-surface-muted: var(--color-band);
+  --color-surface-inverse: var(--color-navy);
+  --color-text-primary: var(--color-ink);
+  --color-text-heading: var(--color-heading);
+  --color-text-secondary: var(--color-muted);
+  --color-text-tertiary: var(--color-faint);
+  --color-text-inverse: #ffffff;
+  --color-accent-foreground: #ffffff;
+  --color-btn-dark: var(--color-navy);
+}
+
+.dark {
+  --color-surface: #0d182c;
+  --color-surface-muted: #111f38;
+  --color-surface-inverse: #f2f2f2;
+  --color-text-primary: #f4f7fb;
+  --color-text-heading: #ffffff;
+  --color-text-secondary: #b8c2d4;
+  --color-text-tertiary: #8a94a8;
+  --color-text-inverse: #0e192b;
+  --color-border: #223354;
+  --color-border-soft: #1d2b47;
+  --color-border-strong: #2e3f63;
+  --color-border-card: #223354;
+  --color-border-input: #2e3f63;
+  --color-row: #16233d;
+  --color-ghost-bg: #16233d;
+  --color-btn-dark: var(--color-brand);
+  --color-app-ink: #f4f7fb;
+  --color-app-muted: #b8c2d4;
+  --color-app-faint: #8a94a8;
+  --color-app-line: #22303f;
+  --color-app-line-2: #2e3f52;
+  --color-app-line-3: #22303f;
+  --color-app-band: #0d182c;
+  --color-app-band-2: #111f38;
+  --color-app-dash: #3b4756;
+  --color-danger: #dc2626;
+  --color-danger-hover: #ef4444;
+  --color-danger-foreground: #f87171;
+  --color-danger-soft: rgb(248 113 113 / 0.15);
+}
+
+/* Opt-out scope: elements inside .theme-light always render light, even
+   when a theme=dark cookie put .dark on <html>. Used by the landing page,
+   whose source design is light-only. */
+.theme-light {
+  --color-surface: #ffffff;
+  --color-surface-muted: var(--color-band);
+  --color-surface-inverse: var(--color-navy);
+  --color-text-primary: var(--color-ink);
+  --color-text-heading: var(--color-heading);
+  --color-text-secondary: var(--color-muted);
+  --color-text-tertiary: var(--color-faint);
+  --color-text-inverse: #ffffff;
+  --color-border: #e5e5e5;
+  --color-border-soft: #e8e8e8;
+  --color-border-strong: #c9c9c9;
+  --color-border-card: #d7d7d7;
+  --color-border-input: #e0e0e0;
+  --color-row: #f0f5fe;
+  --color-ghost-bg: #f9f9f9;
+  --color-btn-dark: var(--color-navy);
+  --color-app-ink: #0e0f11;
+  --color-app-muted: #565a61;
+  --color-app-faint: #a3a7ad;
+  --color-app-line: #dcdddf;
+  --color-app-line-2: #c9cbce;
+  --color-app-line-3: #dcdddf;
+  --color-app-band: #efefef;
+  --color-app-band-2: #ecedef;
+  --color-app-dash: #a3a7ad;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-foreground: #dc2626;
+  --color-danger-soft: rgb(220 38 38 / 0.08);
+}
+
+@theme inline {
+  /* Colors */
+  --color-brand: var(--color-brand);
+  --color-brand-soft: var(--color-brand-soft);
+  --color-navy: var(--color-navy);
+  --color-navy-2: var(--color-navy-2);
+  --color-ink: var(--color-ink);
+  --color-navtext: var(--color-navtext);
+  --color-overlay-end: var(--color-overlay-end);
+  --color-pill-border: var(--color-pill-border);
+  --color-pill-bg: var(--color-pill-bg);
+  --color-heading: var(--color-heading);
+  --color-muted: var(--color-muted);
+  --color-subtle: var(--color-subtle);
+  --color-faint: var(--color-faint);
+  --color-band: var(--color-band);
+  --color-ghost-bg: var(--color-ghost-bg);
+  --color-row: var(--color-row);
+  --color-hot: var(--color-hot);
+  --color-border: var(--color-border);
+  --color-border-soft: var(--color-border-soft);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-card: var(--color-border-card);
+  --color-border-input: var(--color-border-input);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-surface-inverse: var(--color-surface-inverse);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-heading: var(--color-text-heading);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+  --color-text-inverse: var(--color-text-inverse);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-btn-dark: var(--color-btn-dark);
+  --color-app-ink: var(--color-app-ink);
+  --color-app-navy: var(--color-app-navy);
+  --color-app-muted: var(--color-app-muted);
+  --color-app-faint: var(--color-app-faint);
+  --color-app-line: var(--color-app-line);
+  --color-app-line-2: var(--color-app-line-2);
+  --color-app-line-3: var(--color-app-line-3);
+  --color-app-band: var(--color-app-band);
+  --color-app-band-2: var(--color-app-band-2);
+  --color-app-dash: var(--color-app-dash);
+  --color-danger: var(--color-danger);
+  --color-danger-hover: var(--color-danger-hover);
+  --color-danger-foreground: var(--color-danger-foreground);
+  --color-danger-soft: var(--color-danger-soft);
+
+  /* SocialWorks-App shell (swa-*) - utilities: bg-swa-shell, text-swa-muted, etc. */
+  --color-swa-frame: var(--swa-frame);
+  --color-swa-rail: var(--swa-rail);
+  --color-swa-rail-hover: var(--swa-rail-hover);
+  --color-swa-shell: var(--swa-shell);
+  --color-swa-card: var(--swa-card);
+  --color-swa-ink: var(--swa-ink);
+  --color-swa-ink-2: var(--swa-ink-2);
+  --color-swa-muted: var(--swa-muted);
+  --color-swa-faint: var(--swa-faint);
+  --color-swa-line: var(--swa-line);
+  --color-swa-chip: var(--swa-chip);
+  --color-swa-accent: var(--swa-accent);
+  --color-swa-ok: var(--swa-ok);
+  --color-swa-ok-bg: var(--swa-ok-bg);
+  --color-swa-stripe: var(--swa-stripe);
+  --color-swa-blue: var(--swa-blue);
+  --color-swa-blue-2: var(--swa-blue-2);
+  --color-swa-blue-deep: var(--swa-blue-deep);
+  --color-swa-blue-mid: var(--swa-blue-mid);
+  --color-swa-blue-ice: var(--swa-blue-ice);
+  --color-swa-hero-ice: var(--swa-hero-ice);
+  --color-swa-navy: var(--swa-navy);
+  --color-swa-blue-wash: var(--swa-blue-wash);
+  --color-swa-blue-wash-2: var(--swa-blue-wash-2);
+  --color-swa-lime: var(--swa-lime);
+  --color-swa-lime-hi: var(--swa-lime-hi);
+  --color-swa-olive: var(--swa-olive);
+  --color-swa-olive-2: var(--swa-olive-2);
+  --color-swa-olive-deep: var(--swa-olive-deep);
+  --color-swa-green-2: var(--swa-green-2);
+  --color-swa-green-deep: var(--swa-green-deep);
+  --color-swa-ok-soft: var(--swa-ok-soft);
+  --color-swa-gold: var(--swa-gold);
+  --color-swa-gold-2: var(--swa-gold-2);
+  --color-swa-gold-deep: var(--swa-gold-deep);
+  --color-swa-gold-ink: var(--swa-gold-ink);
+  --color-swa-gold-3: var(--swa-gold-3);
+  --color-swa-violet: var(--swa-violet);
+  --color-swa-violet-deep: var(--swa-violet-deep);
+  --color-swa-violet-ink: var(--swa-violet-ink);
+  --color-swa-danger: var(--swa-danger);
+  --color-swa-danger-soft: var(--swa-danger-soft);
+  --color-swa-out: var(--swa-out);
+  --color-swa-out-hover: var(--swa-out-hover);
+  --color-swa-out-ink: var(--swa-out-ink);
+  --color-swa-out-ink-2: var(--swa-out-ink-2);
+  --color-swa-gray-1: var(--swa-gray-1);
+  --color-swa-gray-2: var(--swa-gray-2);
+  --color-swa-gray-3: var(--swa-gray-3);
+  --color-swa-gray-4: var(--swa-gray-4);
+  --color-swa-gray-5: var(--swa-gray-5);
+  --color-swa-gray-6: var(--swa-gray-6);
+  --color-swa-gray-7: var(--swa-gray-7);
+  --color-swa-gray-8: var(--swa-gray-8);
+  --color-swa-gray-9: var(--swa-gray-9);
+  --color-swa-gray-10: var(--swa-gray-10);
+  --color-swa-gray-11: var(--swa-gray-11);
+  --color-swa-gray-12: var(--swa-gray-12);
+  --color-swa-mid-1: var(--swa-mid-1);
+  --color-swa-mid-2: var(--swa-mid-2);
+  --color-swa-mid-3: var(--swa-mid-3);
+  --color-swa-mid-4: var(--swa-mid-4);
+  --color-swa-disabled-ink: var(--swa-disabled-ink);
+  --color-swa-disabled-bg: var(--swa-disabled-bg);
+  --color-swa-dark-2: var(--swa-dark-2);
+  --color-swa-bud-1: var(--swa-bud-1);
+  --color-swa-bud-2: var(--swa-bud-2);
+  --color-swa-bud-3: var(--swa-bud-3);
+  --color-swa-bud-4: var(--swa-bud-4);
+  --color-swa-bud-5: var(--swa-bud-5);
+  --radius-swa-card: var(--swa-radius-card);
+  --shadow-swa: var(--swa-shadow);
+  --spacing-swa-app-pad: var(--swa-app-pad);
+  --spacing-swa-btn-px: var(--swa-btn-px);
+  --text-swa: var(--swa-text);
+  --tracking-swa: var(--swa-tracking);
+
+  /* Typography (loaded via next/font in app/layout.tsx) — match SocialWorks-App */
+  --font-sans: var(--font-urbanist), "Urbanist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-card: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-fine: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-jakarta: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-manrope: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-sora: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-geist: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-manjari: var(--font-manjari), ui-sans-serif, system-ui, sans-serif;
+
+  /* Font sizes used by the design (px) */
+  --text-xs: 0.75rem;    /* 12  badges on calendar rows */
+  --text-sm: 0.9375rem;  /* 15  card meta text */
+  --text-base: 1.0625rem;/* 17  card body / footer fine print */
+  --text-md: 1.1875rem;  /* 19  checklist items, small quotes */
+  --text-lg: 1.25rem;    /* 20  body copy, buttons */
+  --text-xl: 1.375rem;   /* 22  CTA buttons, section labels */
+  --text-2xl: 1.5rem;    /* 24  footer headings, kicker labels */
+  --text-3xl: 1.625rem;  /* 26  card titles */
+  --text-4xl: 2.125rem;  /* 34  FAQ questions, stats small */
+  --text-5xl: 2.75rem;   /* 44  mobile hero heading */
+  --text-6xl: 3.25rem;   /* 52  section headings */
+  --text-7xl: 4.375rem;  /* 70  hero heading, stat numbers */
+
+  /* Tracking */
+  --tracking-tightest: -0.175rem; /* -2.8px hero heading */
+  --tracking-tighter: -0.15rem;   /* -2.4px section headings */
+  --tracking-tight: -0.125rem;    /* -2px */
+  --tracking-card: -0.0375rem;    /* -0.6px card meta */
+  --tracking-body: -0.0275rem;    /* -0.44px body copy */
+  --tracking-label: -0.025rem;    /* -0.4px kicker labels */
+  --tracking-wide: 0.0625rem;     /* 1px checklist, case study */
+  --tracking-wider: 0.06875rem;   /* 1.1px */
+  --tracking-kicker: 0.1625rem;   /* 2.6px section labels */
+  --tracking-widest: 0.20625rem;  /* 3.3px stats label */
+
+  /* Radii */
+  --radius-btn: 0.625rem;    /* 10 buttons, ROI card */
+  --radius-row: 0.8125rem;   /* 13 calendar rows */
+  --radius-badge: 1rem;      /* 16 badges, pills */
+  --radius-logo: 1.25rem;    /* 20 logo marquee cards */
+  --radius-card: 1.5625rem;  /* 25 calendar card */
+  --radius-image: 1.875rem;  /* 30 photo cards */
+  --radius-panel: 2.1875rem; /* 35 problem/testimonial cards, CTA pill */
+  --radius-xl: 2.6875rem;    /* 43 case study cards */
+
+  /* Shadows */
+  --shadow-card: 0 4px 10px 2px rgb(0 0 0 / 0.1);
+  --shadow-card-lg: 0 4px 16px 1px rgb(0 0 0 / 0.1);
+
+  /* Layout */
+  --breakpoint-container: 107.5rem; /* 1720 max content width */
+
+  /* Motion */
+  --animate-marquee: marquee 28s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+/* SocialWorks-App body type — Tailwind preflight uses 16px / normal spacing.
+   Apply on portal shells so Urbanist rhythm matches the prototype. */
+.swa-proto-type,
+.v2-root {
+  font-family: var(--swa-font);
+  font-size: var(--swa-text);
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: var(--swa-tracking);
+  color: var(--swa-ink);
+  -webkit-font-smoothing: antialiased;
+}
+/* Never target `button` here — a higher-specificity color:inherit (from an
+   earlier draft / Tailwind merge) beat `.text-white` and hid CTA labels. */
+.swa-proto-type input,
+.swa-proto-type select,
+.v2-root input,
+.v2-root select {
+  font-family: inherit;
+  letter-spacing: normal;
+}
+/* Proto parity: swa.css `button,input,select{font:inherit}` also strips
+   tracking (Blink resets letter-spacing via the font shorthand), but
+   Tailwind preflight re-adds `letter-spacing:inherit` on the same elements
+   and that explicit longhand beats the shorthand's implicit reset. Pin the
+   proto values so .pill/.cta/.tab/.obtn render untracked like the proto. */
+.swa-proto-type button,
+.v2-root button {
+  letter-spacing: normal;
+}
+/* The input reset above must not clobber the proto's own overrides: .sizer
+   inputs re-inherit the sizer's tracking (company name/site fields), and
+   .cp-hexrow inputs keep their .06em. */
+.sizer input {
+  letter-spacing: inherit;
+}
+.cp-hexrow input {
+  letter-spacing: 0.06em;
+}
+
+/* ==========================================================================
+   APP PATCHES + PROTO EXTENSIONS
+   Everything below was previously split across v2.css / v2dashboard.css /
+   v2proto.css / login-proto.css. Rules live unlayered at the end so they
+   behave like the old loaded-last patch files: they win over the proto
+   layer above. Proto classes still apply globally; these selectors kept
+   because the verbatim stylesheet does not cover them.
+   ========================================================================== */
+
+/* next/font: resolve the proto --font var to the loaded face */
+:root{--font:var(--font-urbanist), 'Urbanist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif}
+
+/* Read-only company name on the profile card (editableName=false port): the
+   proto renders it through the editable .sizer.co-name field, so mirror that
+   type instead of falling back to body text. */
+.co-name-txt{font-size:clamp(18px,2.3vh,24px);font-weight:500;letter-spacing:-.01em}
+
+/* Auth-step forms: proto has no <form> around .otp/.af-err/.af-btn; the port
+   needs one for submit semantics, so the form inherits .auth-step's flex
+   gap instead of collapsing spacing to margins only. #emailForm keeps its
+   own 10px gap via the id selector. */
+.v2-root .auth-step>form, .auth-step>form{display:flex;flex-direction:column;gap:clamp(14px,2vh,20px)}
+.af-btn{width:100%}
+
+/* Embedded pages: the private layout already paints the frame (bg-swa-frame)
+   and PrivateShell paints the light card (bg-swa-shell); a .v2-root inside
+   the shell must stay transparent. */
+.swa-shell .v2-root{background:transparent}
+.v2-root{min-height:100%}
+
+/* Portaled overlays (tour, task modals). body is display:flex; without
+   position:fixed a .v2-root{min-height:100%} portal child takes a full
+   viewport flex track and collapses PrivateShell to padding-only height
+   (black screen with only the tour card visible). Skip when Tailwind
+   `absolute` is also set (NotificationBell dropdown). */
+.v2-float:not(.absolute){
+  position:fixed;
+  inset:0;
+  z-index:65;
+  min-height:0;
+  width:auto;
+  height:auto;
+  pointer-events:none;
+  background:transparent;
+}
+.v2-float:not(.absolute)>*{pointer-events:auto}
+
+/* CTA text alignment: Tailwind preflight makes svg display:block, so a lucide
+   icon inside an inline .obtn stacked above its label (Manage/Disconnect on
+   /integrations). Give every proto button an inline-flex centerline and stop
+   .cta labels wrapping ("Connect Google Search Console" split to two lines). */
+.obtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.cta{white-space:nowrap}
+/* Billing “Signed Agreement” / portal pills on gray .card (#F8F8F8).
+   Proto uses rgba(255,255,255,.7) → reads as soft white (~#FDFDFD), not
+   flat #fff. Unlayered so gap/bg beat the .obtn flex patch above. */
+.bl-sbtn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  height:44px;
+  margin:14px 0 0;
+  padding:0 28px;
+  border:0;
+  border-radius:999px;
+  background:rgba(255,255,255,.7);
+  color:var(--ink,#0E0F11);
+  font-size:14px;
+  font-weight:400;
+}
+.bl-sbtn:hover{background:#fff}
+.bl-sbtn svg{width:14px;height:14px;flex:none}
+.bl-sbtn.bl-sign{background:var(--ink,#0E0F11);color:#fff}
+.bl-sbtn.bl-sign:hover{background:#2A2C30}
+
+/* ---- kept from v2dashboard.css (app-authored: billing .bl-*, ads .ad-*, clients, av-*) ---- */
+/* Dashboard (client) styles - ported from SocialWorks-App prototype
+   DashboardPage + index.css, selectors scoped under .v2-root. Loaded by
+   V2ClientWeek only. */
+.v2-dash.is-empty>.d-f{display:none!important}
+.v2-dash:not(.is-empty)>.d-e{display:none!important}
+@keyframes livePing{from{transform:scale(1);opacity:.6}to{transform:scale(2.8);opacity:0}}
+@keyframes spDraw{to{stroke-dashoffset:0}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes emIn{from{opacity:0;transform:translateX(var(--emx,12px))}to{opacity:1;transform:none}}
+@keyframes emFlash{0%{color:#2E9E5B}100%{color:var(--ink)}}
+/* advisor card: the message icon turns into an outward arrow on hover (it opens WhatsApp) */
+[data-dash="text-tj"]{position:relative}
+[data-dash="text-tj"] .gi, [data-dash="text-tj"] .ga{position:absolute;inset:0;display:grid;place-items:center;transition:opacity .3s ease,transform .4s cubic-bezier(.2,.8,.2,1)}
+[data-dash="text-tj"] .ga{opacity:0;transform:translate(-5px,5px)}
+[data-dash="text-tj"]:hover .gi, [data-dash="text-tj"]:focus-visible .gi{opacity:0;transform:scale(.6)}
+[data-dash="text-tj"]:hover .ga, [data-dash="text-tj"]:focus-visible .ga{opacity:1;transform:none}
+[data-dash="text-tj"] .gi svg, [data-dash="text-tj"] .ga svg{width:20px;height:20px}
+@keyframes svUp{from{clip-path:inset(100% 0 0 0 round 999px)}to{clip-path:inset(0 0 0 0 round 999px)}}
+@keyframes dotIn{from{opacity:0;transform:translateY(6px)}}
+@keyframes smGrow{from{clip-path:inset(0 100% 0 0 round 999px)}to{clip-path:inset(0 0 0 0 round 999px)}}
+@keyframes livePulse{50%{opacity:.35}}
+/* footer row for the sync card: details toggle + integrations shortcut share the border */
+.su-ft{display:flex;margin:clamp(14px,2vh,20px) calc(-1 * clamp(16px,1.6vw,30px)) calc(-1 * clamp(12px,2.6vh,32px));border-top:1px solid #E9E9EA}
+.su-ft .su-tog{flex:1;margin:0;border-top:none}
+.su-ft .su-tog+.su-tog{border-left:1px solid #E9E9EA}
+a.su-tog{text-decoration:none}
+a.su-tog svg{transition:none}
+@keyframes cpIn{from{opacity:0;transform:scale(.7)}}
+@keyframes hcIn{from{transform:translateY(135%)}}
+@keyframes hcUp{from{transform:translateY(105%)}}
+@keyframes ldFormSoft{0%{filter:blur(7px);opacity:.45}14%{filter:blur(3px);opacity:.8}45%,100%{filter:blur(7px);opacity:.45}}
+@keyframes ldForm{0%{filter:blur(7px);opacity:.45}12%{filter:blur(.8px);opacity:.95}40%{filter:blur(4px);opacity:.65}100%{filter:blur(7px);opacity:.45}}
+@keyframes ldRowSplash{0%{background-position:0% 50%;--sa:0}6%{--sa:1}18%{--sa:1}24%,100%{background-position:100% 50%;--sa:0}}
+@keyframes ldTxt{0%{background-position:100% 0}24%,100%{background-position:0 0}}
+@keyframes ldGrain{0%{background-position:0 0}17%{background-position:-41px 23px}33%{background-position:17px -36px}50%{background-position:-29px -11px}67%{background-position:38px 31px}83%{background-position:-13px 44px}100%{background-position:0 0}}
+@keyframes ldRise{from{opacity:0;transform:translateY(14px)}}
+@keyframes ldSpin{to{transform:rotate(360deg)}}
+/* the period field governs everything below, so the header spans both columns */
+.av.rp{display:grid;grid-template-rows:auto 1fr;grid-auto-rows:auto;row-gap:clamp(16px,2.6vh,28px)}
+@keyframes rpShine{0%{background-position:100% 0}50%,100%{background-position:0 0}}
+/* right behind the text glow, a soft diffuse white splash drifts across the row */
+@property --sa{syntax:'<number>';inherits:false;initial-value:0}
+@keyframes rpSplash{0%{background-position:-40% 50%;--sa:0}10%{--sa:1}44%{--sa:1}55%,100%{background-position:140% 50%;--sa:0}}
+@keyframes rpLogo{0%,30%,100%{filter:none}12%{filter:drop-shadow(0 0 6px rgba(63,166,230,.75)) brightness(1.15)}}
+@property --rh{syntax:'<number>';inherits:false;initial-value:0}
+.av-th .av-ic{position:absolute;inset:0;display:grid;place-items:center;color:#9A9DA3}
+.av-th .av-ic svg{width:34px;height:34px}
+.av-add:disabled{opacity:.6;cursor:default}
+.ld-pop .menu button:hover{background:#F3F4F6!important;color:var(--ink)}
+.ld-pop .menu a.st-docnew{display:flex;align-items:center;gap:8px;padding:10px 12px;margin-top:4px;border-top:1px solid #EFEFF0;border-radius:0 0 10px 10px;font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s,background .2s}
+.ld-pop .menu a.st-docnew:hover{background:#F3F4F6;color:var(--ink)}
+.ld-pop .menu a.st-docnew svg{width:13px;height:13px}
+@keyframes ldChg{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.ld-fm{display:flex!important;flex-wrap:wrap;gap:0 8px;min-width:0!important;width:max-content}
+.ld-ff{flex:1 0 100%;width:0;min-width:100%;margin-top:6px;padding-top:6px;border-top:1px solid #EFEFF0;display:flex;justify-content:flex-end;padding:12px 6px 6px!important}
+.ld-pop .menu .ld-ff button{width:auto;display:inline-flex;justify-content:center;padding:0 22px;height:44px;border-radius:999px;font-size:15px;background:#F3F4F6!important;transition:background .3s ease,color .3s ease}
+.ld-pop .menu .ld-ff button:hover:not(:disabled){background:#E9EAEC!important}
+.ld-pop .menu .ld-ff button:disabled{color:var(--muted);opacity:.55;cursor:default}
+.ld-fg{display:flex;flex-direction:column;min-width:210px}
+.ld-fg+.ld-fg{padding-left:8px;border-left:1px solid #EFEFF0}
+.ld-fg h6{margin:0;padding:10px 12px 6px;font-size:13px;font-weight:400;color:var(--muted)}
+.ld-fn{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#fff;color:var(--ink);font-size:12px;font-weight:500}
+.ld-cur{opacity:.65}
+/* leads-page extras: pill <select> + dark pill button matching .obtn */
+.ld-sel{height:48px;max-width:260px;padding:0 38px 0 18px;border:0;border-radius:999px;background-color:rgba(255,255,255,.5);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235E6268' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;background-size:13px;font-size:14px;color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;transition:background-color .35s ease}
+.ld-sel:hover, .ld-sel:focus{background-color:#fff}
+.ld-new{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 22px;border-radius:999px;border:0;background:var(--ink);color:#fff;font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;transition:background .3s ease}
+.ld-new:hover:not(:disabled){background:#2A2C30}
+.ld-new:disabled{opacity:.35;cursor:default}
+.ld-new svg{width:15px;height:15px}
+.ld-act{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ld-plat{display:flex;align-items:center;gap:16px;margin-right:12px}
+.ld-plat-opt{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;transition:color .25s}
+.ld-plat-opt:has(input:checked){color:var(--ink)}
+.ld-plat-opt input{width:15px;height:15px;margin:0;accent-color:var(--ink);cursor:pointer}
+.ld-dl{list-style:none;margin:0;padding:0}
+.ld-dl li:first-child{border-top:0}
+.ld-dl small{font-size:13px;color:var(--muted)}
+.ld-dl b{font-size:15px;font-weight:500;color:var(--ink);word-break:break-word}
+.ld-danger{color:#B3261E!important}
+.ld-dl a{color:inherit}
+/* ---------- ads page (same .ld design language, entity table) ---------- */
+.ad-tbl{min-width:1100px;table-layout:fixed}
+.ad-tbl tbody tr{cursor:pointer}
+.ad-tbl th:nth-child(1){width:22%}
+.ad-tbl th:nth-child(2){width:13%}
+.ad-tbl th:nth-child(3){width:10%}
+.ad-tbl th:nth-child(4){width:10%}
+.ad-tbl th:nth-child(5){width:9%}
+.ad-tbl th:nth-child(6){width:9%}
+.ad-tbl th:nth-child(7){width:12%}
+.ad-tbl th:nth-child(8){width:15%}
+.rp-tbl.ad-tbl th, .rp-tbl.ad-tbl td{text-align:left}
+.rp-tbl.ad-tbl th:last-child, .rp-tbl.ad-tbl td:last-child{text-align:left}
+.ad-ic{flex:none;width:38px;height:38px;border-radius:12px;background:#F1F2F4;color:var(--muted);display:grid;place-items:center;overflow:hidden}
+.ad-ic svg{width:16px;height:16px}
+.ad-ic img{width:100%;height:100%;object-fit:cover}
+.ld-ico{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:background .3s,color .3s;border:0;background:none;flex:none}
+.ld-ico:hover{background:#F1F2F4;color:var(--ink)}
+.ld-ico svg{width:15px;height:15px}
+.ld-ico.ld-del:hover{background:#FBEAE9;color:#B3261E}
+.ld-acts{display:flex;gap:4px;justify-content:flex-end}
+.ld-crumbs{display:flex;flex-wrap:wrap;gap:8px}
+.ld-crumb{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 4px 0 14px;border-radius:999px;background:#fff;font-size:13px;font-weight:500;color:var(--ink)}
+.ld-crumb small{font-weight:400;color:var(--muted)}
+.ld-crumb button{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:background .3s,color .3s}
+.ld-crumb button:hover{background:#F1F2F4;color:var(--ink)}
+.ld-crumb button svg{width:12px;height:12px}
+.st-cta{display:inline-flex;width:auto;height:44px;padding:0 22px;font-size:14px;font-weight:500}
+.st-hrow span:nth-child(2), .st-hrow span:nth-child(3), .st-row .st-sw{justify-self:center}
+.st-fw{display:flex;flex-wrap:wrap;align-items:center;min-width:0;flex:1;justify-content:flex-end}
+/* .ld page column rhythm - prototype's .dash gap between greet/bar/body */
+.ld{display:flex;flex-direction:column;gap:clamp(18px,3vh,28px)}
+/* ---- billing ---- */
+.bl{display:flex;flex-direction:column;gap:clamp(18px,3vh,28px)}
+.bl-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.4vh,28px);align-items:start}
+@media(max-width:980px){
+.bl-cols{grid-template-columns:1fr}
+}
+.bl-price{display:flex;align-items:baseline;gap:8px;margin-top:2px}
+.bl-price b{font-size:clamp(30px,4.4vh,48px);font-weight:400;letter-spacing:-.035em;color:var(--ink)}
+.bl-price span{font-size:clamp(13px,1.5vh,16px);font-weight:300;color:var(--ink-2)}
+.bl-rows{display:flex;flex-direction:column}
+.bl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 4px;border-top:1px solid var(--line)}
+.bl-row:first-child{border-top:0}
+.bl-k{font-size:13px;font-weight:300;color:var(--ink-2)}
+.bl-pm{display:flex;align-items:center;gap:14px;padding:14px;border-radius:clamp(18px,2.4vh,26px);background:#fff}
+.bl-pm .pm-ic{flex:none;width:clamp(40px,5vh,52px);height:clamp(40px,5vh,52px);border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center}
+.bl-pm .pm-ic svg{width:20px;height:20px}
+.bl-pm .pm-tx{flex:1;min-width:0}
+.bl-pm .pm-tx b{display:block;font-size:15px;font-weight:500;color:var(--ink)}
+.bl-pm .pm-tx span{display:block;font-size:13px;font-weight:300;color:var(--ink-2)}
+.bl-hrow, .bl-inv{display:grid;grid-template-columns:minmax(0,1fr) 96px 90px auto;gap:14px;align-items:center}
+.bl-hrow{padding:0 4px 8px;font-size:11px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2)}
+.bl-inv{padding:12px 4px;border-top:1px solid var(--line)}
+.bl-inv .n{font-size:14px;font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bl-inv .d{font-size:12px;font-weight:300;color:var(--ink-2)}
+.bl-inv .amt{font-size:14px;font-weight:500;color:var(--ink);text-align:right}
+.bl-inv .lnk{font-size:13px;color:#3FA6E6;text-decoration:none}
+.bl-inv .lnk:hover{text-decoration:underline}
+.bl-form{display:grid;grid-template-columns:minmax(0,1fr) 110px minmax(0,1fr) auto;gap:10px;padding-top:14px;border-top:1px solid var(--line);align-items:center}
+@media(max-width:720px){
+.bl-form{grid-template-columns:1fr 1fr}
+}
+.bl-in{height:clamp(36px,4.6vh,48px);padding:0 clamp(12px,1vw,18px);border-radius:999px;background:#fff;border:1px solid rgba(14,15,17,.1);font-size:14px;font-weight:300;outline:none;color:var(--ink);min-width:0}
+.bl-in:focus{border-color:rgba(14,15,17,.3)}
+.bl-in::placeholder{color:#8A8D91}
+.bl-in::-webkit-outer-spin-button, .bl-in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.bl-in[type=number]{-moz-appearance:textfield;appearance:textfield}
+.bl-sel{display:flex;flex-direction:column;gap:8px}
+.bl-opt{padding:12px 16px;border-radius:clamp(14px,1.8vh,20px);border:1.5px solid rgba(14,15,17,.1);background:#fff;text-align:left;font-size:14px;font-weight:300;color:var(--ink-2);cursor:pointer;transition:border-color .2s,background .2s}
+.bl-opt:hover{border-color:rgba(14,15,17,.25)}
+.bl-opt.on{border-color:var(--ink);color:var(--ink);font-weight:400}
+.bl-opt.on b{font-weight:600}
+.bl-opt b{font-weight:500;color:var(--ink)}
+.bl-opt span{float:right;color:var(--ink-2);font-weight:300}
+.bl-crow>button{width:100%;display:flex;align-items:center;gap:14px;padding:14px 4px;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.bl-crow:first-child>button{border-top:0}
+.bl-crow .nm{flex:1;min-width:0}
+.bl-crow .nm b{display:block;font-size:14px;font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bl-crow .nm span{display:block;font-size:12px;font-weight:300;color:var(--ink-2)}
+.bl-crow .chev{color:var(--ink-2);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.bl-crow.open .chev{transform:rotate(90deg)}
+.bl-crow .panel{padding:4px 4px 16px;border-top:1px dashed var(--line)}
+.bl-act{height:clamp(36px,4.6vh,48px);padding:0 clamp(16px,1.2vw,24px);border-radius:999px;background:var(--ink);color:#fff;font-size:14px;font-weight:400;border:0;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+.bl-act:hover{opacity:.88}
+.bl-act:disabled{opacity:.35;cursor:not-allowed}
+.bl-act.ghost{background:rgba(14,15,17,.06);color:var(--ink)}
+.bl-act.ghost:hover{background:rgba(14,15,17,.1);opacity:1}
+.bl-actions{display:flex;gap:8px;align-items:center}
+.bl-note{margin:0;font-size:13px;font-weight:300;color:var(--ink-2);line-height:1.5}
+/* client plans table: the card spans the full grid so search, filter and
+   the paged table have room at any roster size */
+.bl-wide{grid-column:1/-1}
+.bl-ctl .ld-search{flex:1;min-width:220px;width:auto}
+.bl-tbl{min-width:720px}
+.bl-tbl th:nth-child(1){width:30%}
+.bl-tbl th:nth-child(2){width:24%}
+.bl-tbl th:nth-child(3){width:18%}
+.bl-tbl th:nth-child(4){width:12%}
+.bl-tbl th:nth-child(5){width:16%;text-align:right}
+.bl-tbl td:last-child{text-align:right}
+.bl-tbl tbody tr{cursor:default}
+.bl-tbl tbody tr.can-edit{cursor:pointer}
+.bl-pname{display:inline-flex;align-items:center;gap:8px}
+.bl-price-sm{font-weight:500}
+/* ── Clients console (cl-*): client org table + invitation table ── */
+.cl-tbl{min-width:820px}
+.cl-tbl th:nth-child(1){width:30%}
+.cl-tbl th:nth-child(2){width:13%}
+.cl-tbl th:nth-child(3){width:15%}
+.cl-tbl th:nth-child(4){width:32%}
+.cl-tbl th:nth-child(5){width:10%;text-align:right}
+.cl-tbl td:last-child{text-align:right}
+.cl-tbl tbody tr{cursor:pointer}
+.cl-conns{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cl-conn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);white-space:nowrap}
+.cl-conn.off{color:var(--muted)}
+.cl-prog{display:flex;align-items:center;gap:10px}
+.cl-prog .bar{flex:1;max-width:120px;height:6px;border-radius:999px;background:#ECEDEF;overflow:hidden}
+.cl-prog .bar i{display:block;height:100%;border-radius:inherit;background:var(--ink);transition:width .4s cubic-bezier(.2,.8,.2,1)}
+.cl-prog small{font-size:13px;color:var(--muted);white-space:nowrap}
+.cl-pop .menu{min-width:190px}
+.cl-pop .menu button{justify-content:flex-start}
+.cl-pop .menu .ld-fi svg{width:15px;height:15px}
+.cl-bulk>button{display:inline-flex;align-items:center;gap:6px}
+.cl-bulk>button svg{width:14px;height:14px}
+.cl-inv th:nth-child(1){width:34%}
+.cl-inv th:nth-child(2){width:24%}
+.cl-inv th:nth-child(3){width:14%}
+.cl-inv th:nth-child(4){width:18%}
+.cl-inv th:nth-child(5){width:10%;text-align:right}
+.cl-inv td:last-child{text-align:right}
+/* Shared ui/Button inside v2-root: the blanket `button{padding:0}` reset
+   strips the padding that Tailwind utilities would give, leaving dialog
+   CTAs cramped. Restore the md-size padding here (unlayered beats the
+   reset, scoped to the primitive's rounded-btn class so v2's own
+   classes keep their authored padding). */
+button.rounded-btn{padding:10px 20px}
+/* toolbar tabs: the global .tabs margin-bottom inflated .ld-bar and pushed
+   the strip above the pills; reset it so every bar item shares one
+   centerline. .tab also had no padding-top, so the label sat high in the
+   strip - add top padding matching its padding-bottom on every page that
+   uses .ld-tabs (clients, leads, ads). */
+.ld-bar .tabs{margin-bottom:0}
+.ld-tabs .tab{padding-top:clamp(8px,1.2vh,14px)}
+#clientsView #clBody{margin-top:clamp(16px,2.4vh,28px)}
+/* ---------- integrations ---------- */
+.ig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:clamp(12px,1.4vw,24px);margin-top:clamp(18px,3vh,28px)}
+.ig-card{gap:clamp(10px,1.6vh,18px)}
+.ig-top{display:flex;align-items:center;gap:12px}
+.ig-ic{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:14px;background:#fff}
+.ig-ic svg{width:24px;height:24px}
+.ig-tx{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.ig-tx b{font-size:16px;font-weight:500}
+.ig-tx .ld-st{display:inline-flex;align-items:center;gap:6px}
+.ig-tx .ld-st svg{width:11px;height:11px}
+.ig-d{margin:0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.ig-ft{margin-top:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ig-ft .cta{width:100%}
+.ig-ft .obtn{height:40px;padding:0 16px;font-size:14px}
+.ig-ft .obtn svg{width:15px;height:15px}
+.ig-ft .ig-disc{margin-left:auto;color:#C2352B}
+.ig-cfg{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:18px;background:#fff}
+.ig-cfg label{font-size:12px;font-weight:500;color:var(--ink-2)}
+.ig-cfg small{font-size:12px;line-height:1.45;color:var(--ink-2)}
+.ig-cfg .ld-sel{height:42px}
+.bl-edit:disabled{opacity:.5;transform:none}
+.bl-key.bad i{background:#FF8A94}
+@keyframes blShim{from{transform:translateX(-110%)}to{transform:translateX(240%)}}
+@keyframes adsSoft{0%{transform:scale(1);opacity:.55}100%{transform:scale(3.4);opacity:0}}
+.bl-ivt td:nth-child(2), .bl-ivt th:nth-child(2){text-align:left}
+.bl-ivt td:last-child{width:1%;white-space:nowrap}
+.bl-visa.other{background:#4A4E57}
+.bl-exp{font-size:14px;color:var(--muted)}
+@keyframes locZin{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+.pk-sw{position:relative;width:44px;height:26px;border-radius:999px;background:#D5D7DB;transition:background .25s;flex:none}
+.pk-sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s}
+.pk-sw[aria-checked="true"]::after{transform:translateX(18px)}
+
+/* ---- kept from v2.css (old-proto remnants still used: .v2-dash, .task-*, .shell:has(.happy)...) ---- */
+/* Scoped port of SocialWorks-App index v2.html. All rules live under so the design cannot collide with app globals. */
+.v2-root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* Layout: black frame with an icon rail on the left; a light rounded shell holds a task column and a details column. Single deliberate look (no dark variant). */
+.v2-root{
+  color-scheme: light;
+  --frame:#000000;
+  --rail:#1A1A1B;
+  --rail-hover:#2A2A2C;
+  --shell:#EFEFEF;
+  --card:#FFFFFF;
+  --ink:#0E0F11;
+  --ink-2:#3B3E44;
+  --muted:#565A61;
+  --faint:#A3A7AD;
+  --line:#DCDDDF;
+  --chip:#ECEDEF;
+  --accent:#FF6A2B;
+  --ok:#2F9E5B;
+  --ok-bg:#E6F5EC;
+  --stripe:#635BFF;
+  /* Prefer next/font Urbanist variable so weights resolve to the loaded face. */
+  --font:var(--font-urbanist), 'Urbanist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --r-card:28px;
+  --shadow:0 10px 40px rgba(14,15,17,.05);
+  --btn-h:clamp(40px,5vh,56px);
+  --app-pad:16px;
+  --shell-pt:clamp(22px,6.2vh,80px);
+  --shell-pb:clamp(18px,4.2vh,52px);
+  --btn-fs:clamp(14px,1.6vh,17px);
+  --btn-px:clamp(18px,1.7vw,28px);
+  /* Proto body type lives on .v2-root (Tailwind sets body to 16px / normal). */
+  font-family:var(--font);
+  font-size:14px;
+  font-weight:400;
+  line-height:normal;
+  letter-spacing:.035em;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+textarea{font-family:inherit;letter-spacing:normal}
+.score.ghost{position:absolute;z-index:2;pointer-events:none;margin:0}
+.tcard-ghost{position:absolute;z-index:2;pointer-events:none}
+.tcard-ghost>.tcard{width:100%;height:100%}
+.field select, .field input{height:48px;border-radius:14px;border:1px solid rgba(14,15,17,.14);padding:0 14px;background:#fff}
+.field input:focus-visible{border-color:var(--ink)}
+@keyframes blink{50%{opacity:0}}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+@keyframes flash{0%,30%{background:var(--ok-bg);box-shadow:0 0 0 2px var(--ok)}100%{background:rgba(255,255,255,.8);box-shadow:none}}
+/* ---------- company profile ---------- */
+@keyframes popIn{from{opacity:0;transform:scale(.6)}}
+@keyframes fall{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),340px) rotate(var(--r))}}
+.shell.done::before, .shell:has(.happy)::before{opacity:1}
+.shell.done section.col>.greet, .shell.done section.col>.progress, .shell:has(.happy) section.col>.greet, .shell:has(.happy) section.col>.progress{display:none}
+.shell.done #taskArea, .shell:has(.happy) #taskArea{margin-top:0}
+/* the "all set" screen stands on its own: no company card or unlock list on the right */
+.shell.done, .shell:has(.happy){grid-template-columns:minmax(0,1fr)}
+.shell.done .side, .shell:has(.happy) .side{display:none}
+.shell.done section.col, .shell:has(.happy) section.col{width:100%;max-width:1120px;margin-inline:auto}
+.shell.done .happy, .shell:has(.happy) .happy{background:transparent;padding-top:clamp(8px,2vh,24px)}
+.shell.done .happy::before, .shell:has(.happy) .happy::before{display:none}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes float{50%{translate:0 -8px}}
+@keyframes mkIn{from{opacity:0;transform:rotateY(-18deg) rotateX(10deg) translateY(30px)}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes btIn{from{opacity:0;transform:scale(.94)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
+@keyframes pulseDot{50%{box-shadow:0 0 0 6px rgba(232,255,143,0)}}
+@keyframes wIn{from{opacity:0;transform:translateY(14px) scale(.92)}}
+@keyframes arc{to{stroke-dashoffset:29}}
+@keyframes press{0%,52%,62%,100%{transform:none}57%{transform:scale(.88)}}
+@keyframes cur{0%{opacity:0;transform:translate(60px,40px)}15%{opacity:1}50%{opacity:1;transform:translate(0,0)}57%{transform:translate(0,0) scale(.85)}62%{transform:translate(0,0)}85%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(30px,30px)}}
+@keyframes done{0%,58%{opacity:0;transform:translateY(8px) scale(.9)}66%,90%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px)}}
+@keyframes tpIn{from{transform:scale(.4);opacity:0}}
+@keyframes ecFloat{50%{transform:translateX(-50%) rotate(-1deg) translateY(-6px)}}
+@keyframes ecSpin{to{transform:rotate(360deg)}}
+@keyframes tourPulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.06);opacity:0}}
+/* no notifications while the user is still setting up */
+.app.onb #bellBtn{display:none}
+/* client week dashboard: proto .dash/#dashView - two-column grid that flows
+   naturally inside the shell's single scroll area (main). No height caps or
+   per-column scrollports: capping .v2-dash left dead space under the shorter
+   column and clipped content the page scroll could never reach. */
+.swa-shell .v2-root.flex{min-height:0!important}
+.v2-dash{display:grid;grid-template-columns:minmax(0,1fr) clamp(340px,28vw,560px);column-gap:clamp(24px,3.4vw,68px);align-items:start;grid-template-rows:none;height:auto!important;min-height:100%;max-height:none;overflow:visible;margin:0!important;padding:0}
+.v2-dash>.w-main,.v2-dash>.w-side{min-height:0;overflow:visible;overscroll-behavior:auto;padding-top:0;padding-bottom:0}
+.v2-dash>.w-side{margin:0 -8px;padding-left:8px;padding-right:8px}
+@media (max-width:1100px){
+.v2-dash{grid-template-columns:minmax(0,1fr)}
+.v2-dash>.w-main,.v2-dash>.w-side{padding-bottom:0}
+}
+/* the sync card footer is one bordered strip; .su-tog already draws its own
+   border when it stands alone, so inside .su-ft it must not double up */
+.su-ft>.su-tog{margin:0;border-top:0}
+.su-ft>.su-tog+.su-tog{border-left:1px solid #E9E9EA}
+@keyframes bkIn{from{opacity:0;transform:translateY(-6px)}}
+@keyframes cardHl{0%{box-shadow:0 0 0 0 rgba(63,166,230,0)}18%{box-shadow:0 0 0 6px rgba(63,166,230,.35)}55%{box-shadow:0 0 0 10px rgba(63,166,230,.12)}100%{box-shadow:0 0 0 14px rgba(63,166,230,0)}}
+.fp-mid{min-height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center}
+.fp-mid .note{max-width:420px}
+.fp-mid .cta{padding:0 var(--btn-px)}
+/* centered DocuSign opener is text-width, not full-width */
+/* DocuSign returnUrl loads this inside the signing frame - cover the app
+   chrome (sidebar/banner) with a bare centered state */
+.signed-done{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;background:var(--shell)}
+.signed-done .ok-ic{width:56px;height:56px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:grid;place-items:center}
+.signed-done h2{margin:0;font-size:clamp(24px,3.2vh,30px);font-weight:400}
+.signed-done p{margin:0;font-size:15px;color:#565A61}
+@keyframes amPin{50%{transform:translateY(-3px)}}
+.acc-skip{flex:none;align-self:center;height:32px;padding:0 12px;border-radius:999px;background:transparent;color:#9AA0A8;font-size:13px;white-space:nowrap;transition:background .15s,color .15s}
+.acc-skip:hover{background:#F1F2F4;color:#565A61}
+.acc-sk .acc-ic svg{opacity:.35}
+.acc-sk .acc-tx b, .acc-sk .acc-url{opacity:.55}
+@keyframes ctaIn{from{opacity:0;transform:translateY(8px)}}
+@keyframes cBump{40%{transform:scale(1.35)}}
+/* filled dashboard: placeholder only */
+#dashView:not(.is-empty)>*:not(.d-ip){display:none!important}
+.dash.is-empty>.d-ip{display:none}
+/* ---------- motion ---------- */
+/* icons pop in (scale + slight twist) right after their card arrives; --d staggers them with the cards */
+@keyframes icIn{0%{opacity:0;transform:scale(.35) rotate(-28deg)}65%{opacity:1;transform:scale(1.14) rotate(5deg)}100%{opacity:1;transform:none}}
+/* fill-mode "backwards" only, so hover transforms still work once an entrance has finished */
+@keyframes rise{from{opacity:0;transform:translate(var(--dx,0px),14px)}}
+@keyframes bump{40%{transform:scale(1.28)}}
+@keyframes numIn{from{opacity:0;transform:translateY(35%)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,15,17,.22)}70%,100%{box-shadow:0 0 0 10px rgba(14,15,17,0)}}
+/* hero CTA row: skip + main action sit side by side (buttons are flex-level, so they stack without it) */
+.hero-acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-left:auto;flex:none}
+.hero-acts .obtn{background:rgba(255,255,255,.25);color:#fff}
+.hero-acts .obtn:hover{background:rgba(255,255,255,.4)}
+/* lock badge on task cards: .go centers span children only, so a bare svg child sits top-left */
+.go.lk{display:grid;place-items:center}
+.go.lk svg{width:clamp(14px,1.8vh,20px);height:clamp(14px,1.8vh,20px)}
+/* side-column save CTA: full-width pill with real vertical padding */
+.save-cta{width:100%;height:auto;min-height:52px;padding:14px 24px;margin-top:10px}
+.tab .count{align-self:center}
+/* centered per-step task card (real route): narrower than the generic .box,
+   scrollable body inside the fixed-height flex column */
+.task-box{width:min(560px,100%)}
+.task-box .db{padding-bottom:20px}
+/* Route task page: drawer-chrome panel (proto #drawer .dh/.db), docked to the right of the shell */
+.task-drawer{
+  display:flex;flex-direction:column;width:min(520px,100%);
+  max-height:100%;min-height:min(640px,100%);
+  background:#fff;border-radius:32px;
+  box-shadow:0 24px 60px rgba(14,15,17,.12),inset 0 0 0 1px rgba(14,15,17,.04);
+  overflow:hidden;
+}
+.task-drawer .db{min-height:0}
+.task-drawer .status{
+  display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;
+  background:#F1F2F4;font-size:14px;font-weight:500;text-transform:capitalize;
+}
+.task-drawer .status[data-tone="ok"]{background:var(--ok-bg);color:var(--ok)}
+.task-drawer .x{color:var(--ink)}
+
+/* ---- kept from login-proto.css (af-btn .ar bits) ---- */
+/* form-side bits the v2 layer lacks */
+.af-btn .ar{display:inline-grid;place-items:center}
+.af-btn .ar svg{width:16px;height:16px}
+
+/* "Analytics live" chip: the proto's .75-white pill reads opaque over the app's
+   gradient header, so it drops to a translucent glass wash like the html look */
+.w-wait{background:rgba(255,255,255,.35)}
+
+/* ins drawer tabs: the drawer is capped at 520px even on desktop, and real
+   warn items carry per-category tabs (Google, Content, Meta...) beyond the
+   proto's three, so the tab strip overflows and clips. Give it the same
+   sideways-scroll treatment the proto only applies under max-width:760px. */
+.ins-dr .ins-tabs{flex:none;overflow-x:auto;scrollbar-width:none}
+.ins-dr .ins-tabs::-webkit-scrollbar{display:none}
+.ins-dr .ins-tabs .tab{white-space:nowrap}
+
+/* reports: same viewport-height scroller as #billingView. Without a bounded
+   height, .dash's proto overflow-y:auto + overscroll-behavior:contain eats
+   the wheel at its own (unscrollable) boundary and the page cannot scroll. */
+#reportsView{margin:0;padding:var(--shell-pt) 0 var(--shell-pb);min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;align-content:start;grid-template-rows:auto auto;grid-auto-rows:auto}
+#reportsView::-webkit-scrollbar{display:none}
+#reportsView .av-side{position:static;align-self:start;padding-bottom:clamp(8px,1.5vh,20px)}
+#reportsView .av-main{align-self:start;padding-bottom:clamp(8px,1.5vh,20px)}
+
+/* brand marks inside insight rows keep their own colors: the tone-tinted
+   circle halo behind a full-color logo reads as a red/green smear, so
+   brand icons get the plain white circle (proto .st-cr .ins-ic pattern)
+   and the tinted title text still carries the urgency */
+.ins-ic.brand{background:#fff;color:inherit}
+.ins.good .ins-ic.brand,.ins.warn .ins-ic.brand,
+.ic-act.bad .ins-ic.brand,.ic-act.wait .ins-ic.brand{background:#fff;color:inherit}
