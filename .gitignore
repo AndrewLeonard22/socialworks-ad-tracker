@@ -6,3 +6,5 @@ next-env.d.ts
 .vercel
 .env*
 artifact/dist
+# written by `next dev` (Next.js agent rules); not part of the app
+AGENTS.md

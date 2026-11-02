@@ -1,0 +1,90 @@
+{
+ "act_889944390092906": {
+  "data": [
+   {
+    "id": "120211780466830581",
+    "effective_status": "ACTIVE"
+   },
+   {
+    "id": "52540577081745",
+    "effective_status": "PAUSED"
+   },
+   {
+    "id": "120207415530920581",
+    "effective_status": "PAUSED"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "6KVLWbrLMqSWY7-kwtgn6355",
+    "after": "x4lqurZxd-KVHJCJMLlQZksY"
+   }
+  }
+ },
+ "act_10170221": {
+  "data": [
+   {
+    "id": "6620957911515",
+    "effective_status": "PAUSED"
+   },
+   {
+    "id": "6620957925515",
+    "effective_status": "PAUSED"
+   },
+   {
+    "id": "6620957938715",
+    "effective_status": "PAUSED"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "xlprYJ65JtuYKa66wQ8EsGft",
+    "after": "hwSDPPIRctfKSIhPa3-9ZtqR"
+   }
+  }
+ },
+ "act_322974296642516": {
+  "data": [
+   {
+    "id": "120203557760280351",
+    "effective_status": "ACTIVE"
+   },
+   {
+    "id": "120208114785530351",
+    "effective_status": "ACTIVE"
+   },
+   {
+    "id": "120206292574390351",
+    "effective_status": "ACTIVE"
+   },
+   {
+    "id": "120210331275510351",
+    "effective_status": "ACTIVE"
+   },
+   {
+    "id": "120212450961250351",
+    "effective_status": "ACTIVE"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "u4oQChEn5HPY5iXdUyTLrN4V",
+    "after": "K88Krnuvs6ktOCG4Mij2Q1qN"
+   }
+  }
+ },
+ "act_1463834608824526": {
+  "data": [
+   {
+    "id": "120214876520010351",
+    "effective_status": "ACTIVE"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "eQwtSXpBTO9hPYVvxN73VLZK",
+    "after": "pDGqwhg0btor_sPXifRnEz52"
+   }
+  }
+ }
+}

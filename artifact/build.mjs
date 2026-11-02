@@ -16,6 +16,7 @@ execFileSync("npx", [
   "--bundle", "--minify", "--format=iife", "--jsx=automatic", "--target=es2020",
   `--alias:next/link=${join(here, "shims/next-link.tsx")}`,
   `--alias:next/navigation=${join(here, "shims/next-navigation.ts")}`,
+  `--alias:@/lib/live=${join(here, "shims/live.ts")}`,
   "--define:process.env.NODE_ENV=\"production\"",
   "--log-level=warning",
   `--outfile=${join(dist, "app.js")}`,

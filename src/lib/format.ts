@@ -13,17 +13,23 @@ export const count = (n: number) => Math.round(n).toLocaleString("en-US");
 
 export const pct = (n: number) => (n * 100).toFixed(1) + "%";
 
-/** derived metrics, safe against divide by zero */
-export function derived(t: Totals) {
+/** totals where a metric we don't have yet is left out (live rows only have spend and leads) */
+export type Metrics = Partial<Totals>;
+
+const opt = (n: number | undefined, f: (n: number) => string) => (n === undefined ? EMPTY : f(n));
+
+/** derived metrics, safe against divide by zero; a missing metric shows "–" */
+export function derived(t: Metrics) {
+  const { spend, leads, appts } = t;
   return {
-    spend: money(t.spend),
-    leads: count(t.leads),
-    cpl: t.leads ? money2(t.spend / t.leads) : EMPTY,
-    appts: count(t.appts),
-    l2a: t.leads ? pct(t.appts / t.leads) : EMPTY,
-    cpa: t.appts ? money2(t.spend / t.appts) : EMPTY,
-    closed: count(t.closed),
-    revenue: money(t.revenue),
+    spend: opt(spend, money),
+    leads: opt(leads, count),
+    cpl: spend !== undefined && leads ? money2(spend / leads) : EMPTY,
+    appts: opt(appts, count),
+    l2a: appts !== undefined && leads ? pct(appts / leads) : EMPTY,
+    cpa: spend !== undefined && appts ? money2(spend / appts) : EMPTY,
+    closed: opt(t.closed, count),
+    revenue: opt(t.revenue, money),
   };
 }
 

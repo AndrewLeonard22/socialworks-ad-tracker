@@ -72,7 +72,7 @@ export default function CalendarPage() {
           Calendar
           <span>Upcoming client appointments</span>
         </h1>
-        <DemoBadge />
+        <DemoBadge sample />
       </div>
 
       <div className="ld-bar at-calbar">

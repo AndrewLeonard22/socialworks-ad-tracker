@@ -62,7 +62,19 @@
 .at-tbl tbody tr.at-l2{background-color:rgba(255,255,255,.38)}
 /* children arrive like proto .ld-stb.chg */
 .at-in{animation:ldChg .45s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0) * 35ms)}
-.at-tbl tr.at-none td{padding:44px 0;text-align:center;color:var(--muted);cursor:default}
+.at-tbl tr.at-none td,.at-ctbl tr.at-none td{padding:44px 0;text-align:center;color:var(--muted);cursor:default}
+/* the first Meta load: this row only fades in if the answer takes a moment */
+.at-tbl tr.at-wait td{animation:ldChg .4s cubic-bezier(.2,.8,.2,1) .6s backwards}
+/* live Meta rows: ad sets open to their ads, one step further in (each ad's
+   creative sits in the proto .ad-ic box and opens the Meta preview) */
+.at-tbl tbody tr.at-l2.at-exp{cursor:pointer}
+.at-l3 .at-nm{padding-left:90px}
+.at-tbl tbody tr.at-l3{background-color:rgba(255,255,255,.5);cursor:default}
+/* while another date range loads, the current numbers stay on screen, dimmed */
+.at-page .d-kpis,.at-page .rp-tblw{transition:opacity .25s}
+.at-page .at-dim{opacity:.5}
+/* preview drawer: Meta's iframe at its own size, centred in .db */
+.at-prev{flex:none;align-self:center;max-width:100%;border:0}
 
 /* ---------- calendar ---------- */
 .at-calbar{gap:10px;flex-wrap:wrap}

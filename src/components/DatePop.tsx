@@ -19,9 +19,10 @@ export const PRESETS: [string, string, number][] = [
   ["90", "Last 3 months", 90],
 ];
 
+/* "Last N days" ends yesterday, the same days as Ads Manager's presets */
 export const presetRange = (key: string, today: number): Range => {
   const n = PRESETS.find((p) => p[0] === key)?.[2] ?? 30;
-  return { key, from: today - n + 1, to: today };
+  return { key, from: today - n, to: today - 1 };
 };
 
 export const rangeLabel = (r: Range) =>
@@ -155,7 +156,7 @@ export function DatePop({
             type="button"
             aria-pressed={draft.key === k}
             onClick={() => {
-              setDraft({ key: k, from: today - n + 1, to: today });
+              setDraft({ key: k, from: today - n, to: today - 1 });
               setView(monthOf(today));
             }}
           >

@@ -1,0 +1,1811 @@
+{
+ "act_889944390092906": {
+  "data": [
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850581",
+    "ad_name": "Ad #2",
+    "spend": "1896.24",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "983"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "83"
+     },
+     {
+      "action_type": "comment",
+      "value": "10"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "7"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "116"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "116"
+     },
+     {
+      "action_type": "lead",
+      "value": "116"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "116"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "1083"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "1084"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850582",
+    "ad_name": "Ad #1",
+    "spend": "412.18",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "253"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "21"
+     },
+     {
+      "action_type": "comment",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "24"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "24"
+     },
+     {
+      "action_type": "lead",
+      "value": "24"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "24"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "277"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "278"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850583",
+    "ad_name": "Ad #3 - Video",
+    "spend": "268.40",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "179"
+     },
+     {
+      "action_type": "video_view",
+      "value": "778"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "15"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "17"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "17"
+     },
+     {
+      "action_type": "lead",
+      "value": "17"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "17"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "974"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "976"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850584",
+    "ad_name": "Ad #4 - Carousel",
+    "spend": "151.92",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "92"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "8"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "10"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "10"
+     },
+     {
+      "action_type": "lead",
+      "value": "10"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "10"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "101"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "101"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850585",
+    "ad_name": "Ad #5",
+    "spend": "98.77",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "44"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "3"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "7"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "7"
+     },
+     {
+      "action_type": "lead",
+      "value": "7"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "7"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "47"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "47"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850586",
+    "ad_name": "Ad #6 - Reel",
+    "spend": "79.35",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "53"
+     },
+     {
+      "action_type": "video_view",
+      "value": "246"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "4"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "5"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "5"
+     },
+     {
+      "action_type": "lead",
+      "value": "5"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "5"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "303"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "304"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850587",
+    "ad_name": "Ad #7",
+    "spend": "44.10",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "27"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "3"
+     },
+     {
+      "action_type": "lead",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "29"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "31"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120211780466830581",
+    "campaign_name": "Summerhouse | Lead Form | Outdoor Kitchens",
+    "adset_id": "120211780466840581",
+    "adset_name": "Homeowners 30-65 | 25mi",
+    "ad_id": "120211780466850588",
+    "ad_name": "Ad #8",
+    "spend": "27.59",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "13"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "3"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "2"
+     },
+     {
+      "action_type": "lead",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "2"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "16"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "18"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "52540577081745",
+    "campaign_name": "Summerhouse | Website | Book a Consult",
+    "adset_id": "52540577081746",
+    "adset_name": "Website visitors | Schedule",
+    "ad_id": "52540577081747",
+    "ad_name": "Consult - Static",
+    "spend": "36.60",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "17"
+     },
+     {
+      "action_type": "landing_page_view",
+      "value": "12"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "18"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "18"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "axhl01Qy6UK2bHnsmgi-7HQJ",
+    "after": "5Oj3RknJMq5S36BM-HVcGzCi"
+   }
+  }
+ },
+ "act_10170221": {
+  "data": [
+   {
+    "campaign_id": "6620957911515",
+    "campaign_name": "Fence",
+    "adset_id": "6620957912115",
+    "adset_name": "Fence | Broad 20mi",
+    "ad_id": "6620957912715",
+    "ad_name": "Fence - Before/After",
+    "spend": "201.44",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "104"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "9"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.messaging_conversation_started_7d",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.total_messaging_connection",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "114"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "114"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957911515",
+    "campaign_name": "Fence",
+    "adset_id": "6620957912115",
+    "adset_name": "Fence | Broad 20mi",
+    "ad_id": "6620957912716",
+    "ad_name": "Fence - Crew Photo",
+    "spend": "64.12",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "39"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "42"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "42"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957911515",
+    "campaign_name": "Fence",
+    "adset_id": "6620957913315",
+    "adset_name": "Fence | Lookalike 1%",
+    "ad_id": "6620957913915",
+    "ad_name": "Fence - Video",
+    "spend": "76.75",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "55"
+     },
+     {
+      "action_type": "video_view",
+      "value": "223"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "6"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "284"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "286"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957925515",
+    "campaign_name": "Deck Restoration",
+    "adset_id": "6620957926115",
+    "adset_name": "Deck | Homeowners 35+",
+    "ad_id": "6620957926715",
+    "ad_name": "Deck - Stain Colors",
+    "spend": "255.10",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "149"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "13"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "3"
+     },
+     {
+      "action_type": "lead",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "164"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "166"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957925515",
+    "campaign_name": "Deck Restoration",
+    "adset_id": "6620957926115",
+    "adset_name": "Deck | Homeowners 35+",
+    "ad_id": "6620957926716",
+    "ad_name": "Deck - Testimonial Video",
+    "spend": "118.62",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "61"
+     },
+     {
+      "action_type": "video_view",
+      "value": "308"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "7"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "376"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "376"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957925515",
+    "campaign_name": "Deck Restoration",
+    "adset_id": "6620957927315",
+    "adset_name": "Deck | Retargeting 30d",
+    "ad_id": "6620957927915",
+    "ad_name": "Deck - Offer",
+    "spend": "61.33",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "31"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "4"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "35"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "37"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957938715",
+    "campaign_name": "Pressure Washing",
+    "adset_id": "6620957939315",
+    "adset_name": "Washing | Broad 25mi",
+    "ad_id": "6620957939915",
+    "ad_name": "Washing - Driveway",
+    "spend": "172.40",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "81"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "6"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "2"
+     },
+     {
+      "action_type": "lead",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "2"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "87"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "87"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957938715",
+    "campaign_name": "Pressure Washing",
+    "adset_id": "6620957939315",
+    "adset_name": "Washing | Broad 25mi",
+    "ad_id": "6620957939916",
+    "ad_name": "Washing - Siding",
+    "spend": "98.27",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "54"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "4"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "58"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "58"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957938715",
+    "campaign_name": "Pressure Washing",
+    "adset_id": "6620957939315",
+    "adset_name": "Washing | Broad 25mi",
+    "ad_id": "6620957939917",
+    "ad_name": "Washing - House Wash",
+    "spend": "41.08",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "19"
+     },
+     {
+      "action_type": "video_view",
+      "value": "127"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "149"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "149"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957938715",
+    "campaign_name": "Pressure Washing",
+    "adset_id": "6620957940515",
+    "adset_name": "Washing | Advantage+",
+    "ad_id": "6620957941115",
+    "ad_name": "Washing - Reel",
+    "spend": "58.15",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "33"
+     },
+     {
+      "action_type": "video_view",
+      "value": "169"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "2"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "204"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "206"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "6620957938715",
+    "campaign_name": "Pressure Washing",
+    "adset_id": "6620957940515",
+    "adset_name": "Washing | Advantage+",
+    "ad_id": "6620957941116",
+    "ad_name": "Washing - Spring Promo",
+    "spend": "37.20",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "17"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "20"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "20"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "6-09qEAt8FEp-lNPKnEs0Y7b",
+    "after": "u3i6nocImZJ-qW_8zHek5ERz"
+   }
+  }
+ },
+ "act_322974296642516": {
+  "data": [
+   {
+    "campaign_id": "120203557760280351",
+    "campaign_name": "WashBroz Fence Staining - Winner",
+    "adset_id": "120203557760280355",
+    "adset_name": "Fence Staining | Round 5 (DCT)",
+    "ad_id": "120203557760280356",
+    "ad_name": "Fence Staining - DCT",
+    "spend": "836.72",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "462"
+     },
+     {
+      "action_type": "video_view",
+      "value": "2092"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "39"
+     },
+     {
+      "action_type": "comment",
+      "value": "5"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "3"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "32"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "32"
+     },
+     {
+      "action_type": "lead",
+      "value": "33"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "33"
+     },
+     {
+      "action_type": "onsite_conversion.messaging_conversation_started_7d",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.total_messaging_connection",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "2601"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "2603"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120203557760280351",
+    "campaign_name": "WashBroz Fence Staining - Winner",
+    "adset_id": "120203557760280353",
+    "adset_name": "Fence Staining | Round 3",
+    "ad_id": "120203557760280354",
+    "ad_name": "Fence Staining - Before/After",
+    "spend": "209.55",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "135"
+     },
+     {
+      "action_type": "video_view",
+      "value": "503"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "12"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "4"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "4"
+     },
+     {
+      "action_type": "lead",
+      "value": "4"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "4"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "651"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "652"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120208114785530351",
+    "campaign_name": "Christmas Light Campaign",
+    "adset_id": "120208114785540351",
+    "adset_name": "Holiday Lights | 20mi",
+    "ad_id": "120208114785550351",
+    "ad_name": "Christmas Lights - Static",
+    "spend": "512.30",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "374"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "31"
+     },
+     {
+      "action_type": "comment",
+      "value": "4"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "16"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "16"
+     },
+     {
+      "action_type": "lead",
+      "value": "16"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "16"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "411"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "413"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120208114785530351",
+    "campaign_name": "Christmas Light Campaign",
+    "adset_id": "120208114785540351",
+    "adset_name": "Holiday Lights | 20mi",
+    "ad_id": "120208114785550352",
+    "ad_name": "Christmas Lights - Video",
+    "spend": "287.95",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "157"
+     },
+     {
+      "action_type": "video_view",
+      "value": "921"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "14"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "8"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "8"
+     },
+     {
+      "action_type": "lead",
+      "value": "8"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "8"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "1094"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "1095"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120206292574390351",
+    "campaign_name": "House Washing | Spring",
+    "adset_id": "120206292574400350",
+    "adset_name": "Homeowners | 25mi",
+    "ad_id": "120206292574400351",
+    "ad_name": "House Wash - Share",
+    "spend": "640.18",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "358"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "29"
+     },
+     {
+      "action_type": "comment",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "19"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "19"
+     },
+     {
+      "action_type": "lead",
+      "value": "19"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "19"
+     },
+     {
+      "action_type": "onsite_conversion.messaging_conversation_started_7d",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.total_messaging_connection",
+      "value": "2"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "392"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "394"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120206292574390351",
+    "campaign_name": "House Washing | Spring",
+    "adset_id": "120206292574400350",
+    "adset_name": "Homeowners | 25mi",
+    "ad_id": "120206292574400352",
+    "ad_name": "House Wash - Before/After",
+    "spend": "301.44",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "208"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "17"
+     },
+     {
+      "action_type": "comment",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "9"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "9"
+     },
+     {
+      "action_type": "lead",
+      "value": "9"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "9"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "228"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "229"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120206292574390351",
+    "campaign_name": "House Washing | Spring",
+    "adset_id": "120206292574400350",
+    "adset_name": "Homeowners | 25mi",
+    "ad_id": "120206292574400353",
+    "ad_name": "House Wash - Crew",
+    "spend": "122.09",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "87"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "9"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "2"
+     },
+     {
+      "action_type": "lead",
+      "value": "2"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "2"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "96"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "98"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120210331275510351",
+    "campaign_name": "Roof Soft Wash",
+    "adset_id": "120210331275520351",
+    "adset_name": "Roof | Broad",
+    "ad_id": "120210331275520361",
+    "ad_name": "Roof Wash - Video",
+    "spend": "455.62",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "335"
+     },
+     {
+      "action_type": "video_view",
+      "value": "1139"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "30"
+     },
+     {
+      "action_type": "comment",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "11"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "11"
+     },
+     {
+      "action_type": "lead",
+      "value": "11"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "11"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "1509"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "1509"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "nQ5FbCeAp7PBkZY3rdGODoGo",
+    "after": "guKJeLPXy0CqVCFvyI8YhD3D"
+   },
+   "next": "https://graph.facebook.com/v26.0/act_322974296642516/insights?access_token=EAAG...&level=ad&limit=8&after=guKJeLPXy0CqVCFvyI8YhD3D"
+  }
+ },
+ "act_322974296642516|guKJeLPXy0CqVCFvyI8YhD3D": {
+  "data": [
+   {
+    "campaign_id": "120210331275510351",
+    "campaign_name": "Roof Soft Wash",
+    "adset_id": "120210331275520351",
+    "adset_name": "Roof | Broad",
+    "ad_id": "120210331275520362",
+    "ad_name": "Roof Wash - Static",
+    "spend": "140.40",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "80"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "6"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "3"
+     },
+     {
+      "action_type": "lead",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "86"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "88"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120210331275510351",
+    "campaign_name": "Roof Soft Wash",
+    "adset_id": "120210331275530351",
+    "adset_name": "Roof | Lookalike (DCT)",
+    "ad_id": "120210331275530361",
+    "ad_name": "Roof Wash - DCT",
+    "spend": "210.13",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "140"
+     },
+     {
+      "action_type": "video_view",
+      "value": "651"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "13"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "4"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "4"
+     },
+     {
+      "action_type": "lead",
+      "value": "4"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "4"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "806"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "808"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120212450961250351",
+    "campaign_name": "Concrete Sealing",
+    "adset_id": "120212450961260351",
+    "adset_name": "Concrete | 15mi",
+    "ad_id": "120212450961260361",
+    "ad_name": "Sealing - Video",
+    "spend": "181.84",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "115"
+     },
+     {
+      "action_type": "video_view",
+      "value": "636"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "11"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "3"
+     },
+     {
+      "action_type": "lead",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "3"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "763"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "764"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120212450961250351",
+    "campaign_name": "Concrete Sealing",
+    "adset_id": "120212450961260351",
+    "adset_name": "Concrete | 15mi",
+    "ad_id": "120212450961260362",
+    "ad_name": "Sealing - Static",
+    "spend": "109.27",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "58"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "5"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "63"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "64"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120212450961250351",
+    "campaign_name": "Concrete Sealing",
+    "adset_id": "120212450961260351",
+    "adset_name": "Concrete | 15mi",
+    "ad_id": "120212450961260363",
+    "ad_name": "Sealing - Carousel",
+    "spend": "40.00",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "21"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "22"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "22"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "pjV7H5kq2APn0CoiP2uUb4Cm",
+    "after": "of2TJRWrYyeVFgIHveVFY_tQ"
+   }
+  }
+ },
+ "act_1463834608824526": {
+  "data": [
+   {
+    "campaign_id": "120214876520010351",
+    "campaign_name": "Archadeck | Deck Design Consult",
+    "adset_id": "120214876520020351",
+    "adset_name": "Homeowners 40-70 | 30mi",
+    "ad_id": "120214876520030351",
+    "ad_name": "Deck Design - Video",
+    "spend": "512.66",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "276"
+     },
+     {
+      "action_type": "video_view",
+      "value": "1230"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "23"
+     },
+     {
+      "action_type": "comment",
+      "value": "3"
+     },
+     {
+      "action_type": "onsite_conversion.post_save",
+      "value": "1"
+     },
+     {
+      "action_type": "landing_page_view",
+      "value": "166"
+     },
+     {
+      "action_type": "offsite_conversion.fb_pixel_lead",
+      "value": "2"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "6"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "6"
+     },
+     {
+      "action_type": "lead",
+      "value": "8"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "6"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "1533"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "1534"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120214876520010351",
+    "campaign_name": "Archadeck | Deck Design Consult",
+    "adset_id": "120214876520020351",
+    "adset_name": "Homeowners 40-70 | 30mi",
+    "ad_id": "120214876520030352",
+    "ad_name": "Deck Design - Static",
+    "spend": "251.40",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "129"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "10"
+     },
+     {
+      "action_type": "comment",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "4"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "4"
+     },
+     {
+      "action_type": "lead",
+      "value": "4"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "4"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "140"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "140"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   },
+   {
+    "campaign_id": "120214876520010351",
+    "campaign_name": "Archadeck | Deck Design Consult",
+    "adset_id": "120214876520020351",
+    "adset_name": "Homeowners 40-70 | 30mi",
+    "ad_id": "120214876520030353",
+    "ad_name": "Deck Design - Carousel",
+    "spend": "116.31",
+    "actions": [
+     {
+      "action_type": "link_click",
+      "value": "52"
+     },
+     {
+      "action_type": "post_reaction",
+      "value": "5"
+     },
+     {
+      "action_type": "leadgen_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "leadgen.other",
+      "value": "1"
+     },
+     {
+      "action_type": "lead",
+      "value": "1"
+     },
+     {
+      "action_type": "onsite_conversion.lead_grouped",
+      "value": "1"
+     },
+     {
+      "action_type": "post_engagement",
+      "value": "57"
+     },
+     {
+      "action_type": "page_engagement",
+      "value": "57"
+     }
+    ],
+    "date_start": "2026-10-03",
+    "date_stop": "2026-11-01"
+   }
+  ],
+  "paging": {
+   "cursors": {
+    "before": "Ml3pnyVw8CMylx_Ph32Q-I2A",
+    "after": "0M8UwpauzWDLKMa26bkAFj8h"
+   }
+  }
+ },
+ "act_841724902001604": {
+  "data": []
+ },
+ "act_1228254518828538": {
+  "data": []
+ },
+ "act_602118833471205": {
+  "error": {
+   "message": "(#200) Ad account owner has NOT grant ads_management or ads_read permission",
+   "type": "OAuthException",
+   "code": 200,
+   "fbtrace_id": "A7kq1HnG2xT0vZbQe9WcR4p"
+  }
+ }
+}
